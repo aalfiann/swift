@@ -8,7 +8,10 @@ namespace modules\session\helper;
  * This is a general-purpose class that allows to manage PHP built-in sessions
  * and the session variables passed via $_SESSION superglobal.
  *
- * @package SessionHelper
+ * @package    swift-session
+ * @author     M ABD AZIZ ALFIAN <github.com/aalfiann>
+ * @copyright  Copyright (c) 2019 M ABD AZIZ ALFIAN
+ * @license    https://github.com/aalfiann/swift-modules-session/blob/master/license.md  MIT License
  */
 class SessionHelper implements \ArrayAccess, \Countable, \IteratorAggregate
 {

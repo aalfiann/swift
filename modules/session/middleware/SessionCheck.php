@@ -5,10 +5,10 @@ use \Slim\Router;
     /**
      * A class for session check
      *
-     * @package    session
+     * @package    swift-session
      * @author     M ABD AZIZ ALFIAN <github.com/aalfiann>
      * @copyright  Copyright (c) 2019 M ABD AZIZ ALFIAN
-     * @license    https://github.com/aalfiann/swift/blob/master/license.md  MIT License
+     * @license    https://github.com/aalfiann/swift-modules-session/blob/master/license.md  MIT License
      */
     class SessionCheck {
 
