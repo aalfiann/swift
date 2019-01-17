@@ -1,0 +1,6 @@
+/vendor/
+public/storage/
+public/cache/
+logs/app.log
+composer.lock
+config.php

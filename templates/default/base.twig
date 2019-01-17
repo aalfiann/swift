@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  {% block head %}{% endblock %}
+  <link href="{{ site_url ~ path_for('/') }}assets/img/brand/favicon.png" rel="icon" type="image/png">
+  <style>.preloader{position:fixed;width:100%;height:100%;background-color:#fff;z-index:100}.cssload-container{position:relative;width:80px;height:80px;top:50%;margin-top:-40px;left:50%;margin-left:-40px}.cssload-whirlpool,.cssload-whirlpool::before,.cssload-whirlpool::after{position:absolute;top:50%;left:50%;border:2px solid rgba(204,204,204,0);border-left-color:#00c0e2;border-radius:1873px;-o-border-radius:1873px;-ms-border-radius:1873px;-webkit-border-radius:1873px;-moz-border-radius:1873px}.cssload-whirlpool{margin:-47px 0 0 -47px;height:94px;width:94px;animation:cssload-rotate 1150ms linear infinite;-o-animation:cssload-rotate 1150ms linear infinite;-ms-animation:cssload-rotate 1150ms linear infinite;-webkit-animation:cssload-rotate 1150ms linear infinite;-moz-animation:cssload-rotate 1150ms linear infinite}.cssload-whirlpool::before{content:"";margin:-43px 0 0 -43px;height:83px;width:83px;animation:cssload-rotate 1150ms linear infinite;-o-animation:cssload-rotate 1150ms linear infinite;-ms-animation:cssload-rotate 1150ms linear infinite;-webkit-animation:cssload-rotate 1150ms linear infinite;-moz-animation:cssload-rotate 1150ms linear infinite}.cssload-whirlpool::after{content:"";margin:-54px 0 0 -54px;height:105px;width:105px;animation:cssload-rotate 2300ms linear infinite;-o-animation:cssload-rotate 2300ms linear infinite;-ms-animation:cssload-rotate 2300ms linear infinite;-webkit-animation:cssload-rotate 2300ms linear infinite;-moz-animation:cssload-rotate 2300ms linear infinite}@keyframes cssload-rotate{100%{transform:rotate(360deg)}}@-o-keyframes cssload-rotate{100%{-o-transform:rotate(360deg)}}@-ms-keyframes cssload-rotate{100%{-ms-transform:rotate(360deg)}}@-webkit-keyframes cssload-rotate{100%{-webkit-transform:rotate(360deg)}}@-moz-keyframes cssload-rotate{100%{-moz-transform:rotate(360deg)}}</style>
+</head>
+<body class="h-100">
+  <div class="preloader" id="preloader">
+    <div class="cssload-container">
+      <div class="cssload-whirlpool"></div>
+    </div>
+  </div>
+  {% block sidenav %}{% endblock %}
+  {% block main_content %}{% endblock %}
+  <script>
+    {% block js %}
+      function getScript(e,t){t=t||"";var a=document.createElement("script");a.src=e;var n=document.getElementsByTagName("head")[0],d=!1;a.onload=a.onreadystatechange=function(){d||this.readyState&&"loaded"!=this.readyState&&"complete"!=this.readyState||(d=!0,"function"==typeof t&&t(),a.onload=a.onreadystatechange=null,n.removeChild(a))},n.appendChild(a)}function getStyle(e,t){t=t||"";var n=window.document.createElement("link"),i=window.document.getElementsByTagName("head")[0];n.rel="stylesheet",n.href=e,n.media="only x",i.appendChild(n),setTimeout(function(){n.media="all"},0),"function"==typeof t&&t()}
+      {% block loadjs %}
+      (function(){
+        getScript('{{ site_url ~ path_for("/") }}assets/js/app.min.js',function(){
+          getScript('{{ site_url ~ path_for("/") }}assets/vendor/lazysizes/lazysizes.min.js',function(){
+            $$app.addInlineCss('.lazyload{opacity:0;} .lazyloading{opacity:1;transition:opacity 300ms;background:#dbdbdb url({{ site_url ~ path_for("/") }}assets/img/spinner/spinner.gif) no-repeat center;}');
+            for(var image=document.getElementsByTagName("img"),i=0;i<image.length;i++)image[i].getAttribute("src")&&(image[i].setAttribute("data-src",image[i].getAttribute("src")),image[i].removeAttribute("src"),$$app.addClass(image[i],"lazyload"));var frame=document.getElementsByTagName("iframe");for(i=0;i<frame.length;i++)frame[i].getAttribute("data-src")&&$$app.addClass(frame[i],"lazyload");
+            getScript('{{ site_url ~ path_for('/') }}assets/vendor/jquery/dist/jquery.min.js',function(){
+              getScript('{{ site_url ~ path_for('/') }}assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js',function(){
+                {% block appjs %}{% endblock %}
+                {% block stylejs %}{% endblock %}
+              })
+            })
+          })
+        })
+      })();
+      {% endblock %}
+    {% endblock %}
+  </script>
+  <noscript>
+		<style>#preloader{display:none}</style>
+	</noscript>
+</body>
+</html>
