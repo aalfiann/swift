@@ -1,0 +1,151 @@
+{% extends "layout-base.twig" %}
+{% block head %}
+  <meta name="description" content="Start your development with a Dashboard for Bootstrap 4.">
+  <meta name="author" content="Creative Tim">
+  <title>Forgot Password - Free Dashboard for Bootstrap 4</title>
+{% endblock %}
+{% block usermenuleft %}{% endblock %}
+{% block usermenuright %}{% endblock %}
+{% block menu %}
+        <!-- Navigation -->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="./index.html">
+              <i class="ni ni-tv-2 text-primary"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/icons.html">
+              <i class="ni ni-planet text-blue"></i> Icons
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/maps.html">
+              <i class="ni ni-pin-3 text-orange"></i> Maps
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/profile.html">
+              <i class="ni ni-single-02 text-yellow"></i> User profile
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/tables.html">
+              <i class="ni ni-bullet-list-67 text-red"></i> Tables
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/login.html">
+              <i class="ni ni-key-25 text-info"></i> Login
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/register.html">
+              <i class="ni ni-circle-08 text-pink"></i> Register
+            </a>
+          </li>
+        </ul>
+        <!-- Divider -->
+        <hr class="my-3">
+        <!-- Heading -->
+        <h6 class="navbar-heading text-muted">Documentation</h6>
+        <!-- Navigation -->
+        <ul class="navbar-nav mb-md-3">
+          <li class="nav-item">
+            <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard/docs/getting-started/overview.html">
+              <i class="ni ni-spaceship"></i> Getting started
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard/docs/foundation/colors.html">
+              <i class="ni ni-palette"></i> Foundation
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard/docs/components/alerts.html">
+              <i class="ni ni-ui-04"></i> Components
+            </a>
+          </li>
+        </ul>
+{% endblock %}
+{% block main_title %}
+  <!-- Brand -->
+  <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="./index.html">Forgot Password</a>
+{% endblock %}
+{% block content_body %}
+  <div class="row">
+    <div class="col-xl-6 mb-5 mb-xl-0">
+      <div class="card shadow">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Form Forgot Password</h3>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          {% if status == 'success' %}
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>
+            <span class="alert-inner--text"><strong>Success!</strong> {{ message }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% elseif status == 'error' %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span class="alert-inner--icon"><i class="fas fa-exclamation-triangle"></i></span>
+            <span class="alert-inner--text"><strong>Failed!</strong> {{ message }}
+            {% if not problem is empty %}
+              <br>Problem:<br>{{problem}}
+            {% endif %}
+            </span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endif %}
+          <form role="form" method="post">
+                <div id="g-email" class="form-group mb-3">
+                  <div class="input-group input-group-alternative">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                    </div>
+                    <input id="i-email" name="email" class="form-control" placeholder="Your Email address" type="email">
+                  </div>
+                  <div class="text-muted font-italic"><small><span class="text-danger font-weight-700" id="checkemail"></span></small></div>
+                </div>
+                
+                <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+                <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary my-4">Submit</button>
+                </div>
+              </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block appjs %}
+  getScript('{{ site_url ~ path_for('/') }}assets/js/argon.js?v={{ global.app.version }}');
+  $('#i-email').keyup($$app.throttle(function(){
+    $('#g-email').removeClass('has-danger has-success');
+    $('#i-email').removeClass('is-invalid is-valid');
+    $('#checkemail').removeClass('text-danger text-success');
+    $('#checkemail').html('');
+    if($$validate.isNotEmpty($('#i-email').val())){
+      if(!$$validate.isEmail($('#i-email').val())){
+        $('#g-email').addClass('has-danger');
+        $('#i-email').addClass('is-valid');
+        $('#checkemail').addClass('text-danger');
+        $('#checkemail').html('Email address is invalid!');
+      } else {
+        $('#g-email').addClass('has-success');
+        $('#i-email').addClass('is-valid');
+        $('#checkemail').addClass('text-success');
+        $('#checkemail').html('Email address is valid!');
+      }
+    }
+  },1000));
+{% endblock %}
