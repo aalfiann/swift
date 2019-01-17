@@ -1,7 +1,16 @@
 <?php
 namespace modules\user;
+use \modules\genuid\Genuid;
+use \modules\mailer\Mailer;
 use \aalfiann\Filebase;
-
+/**
+ * User class
+ *
+ * @package    swift-user
+ * @author     M ABD AZIZ ALFIAN <github.com/aalfiann>
+ * @copyright  Copyright (c) 2019 M ABD AZIZ ALFIAN
+ * @license    https://github.com/aalfiann/swift-modules-user/blob/master/LICENSE.md  MIT License
+ */
 class User {
 
     /** 
@@ -81,25 +90,32 @@ class User {
         ]);
 
         if (!$user->has($username)) {
-            $item = $user->get($username);
-            $item->username = $username;
-            $item->email = $email;
-            $item->hash = $this->hashPassword($username,$password);
-            if($item->save()){
-                $data = [
-                    'status' => 'success',
-                    'message' => 'Register user successful!'
-                ];
+            if(!$this->isEmailRegistered()) {
+                $item = $user->get($username);
+                $item->username = $username;
+                $item->email = $email;
+                $item->hash = $this->hashPassword($username,$password);
+                if($item->save()){
+                    $data = [
+                        'status' => 'success',
+                        'message' => 'Register user successful!'
+                    ];
+                } else {
+                    $data = [
+                        'status' => 'error',
+                        'message' => 'Process saving failed, please try again!'
+                    ];
+                }
             } else {
                 $data = [
                     'status' => 'error',
-                    'message' => 'Register user failed!'
+                    'message' => 'Email address already taken!'
                 ];
             }
         } else {
             $data = [
                 'status' => 'error',
-                'message' => 'Register user failed! Username is already taken!'
+                'message' => 'Username is already taken!'
             ];
         }
         return $data;
@@ -126,6 +142,95 @@ class User {
             $data = [
                 'status' => 'error',
                 'message' => 'Username is already taken!'
+            ];
+        }
+        return $data;
+    }
+
+    /**
+     * Determine registered email
+     * 
+     * @return bool
+     */
+    public function isEmailRegistered(){
+        $email = $this->email;
+        
+        $user = new \Filebase\Database([
+            'dir' => 'storage/user'
+        ]);
+
+        $list = $user->query()->where('email','=',$email)->limit(1)->results();
+        if(!empty($list)){
+            if($list[0]['email'] == $email) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Verify user email
+     * 
+     * @return array
+     */
+    public function verifyEmail(){
+        if(!$this->isEmailRegistered()) {
+            $data = [
+                'status' => 'success',
+                'message' => 'Email address is available.'
+            ];
+        } else {
+            $data = [
+                'status' => 'error',
+                'message' => 'Email address is already taken!'
+            ];
+        }
+        return $data;
+    }
+
+    /**
+     * Generate forgot key
+     * 
+     * @return array
+     */
+    public function generateForgotKey(){
+        $email = $this->email;
+        if($this->isEmailRegistered()) {
+            $guid = new Genuid();
+            $key = $guid->generate_short_dechex();
+            $expired = strtotime(date('Y-m-d H:i:s').' + 3 day');
+            $forgot = new \Filebase\Database([
+                'dir' => 'storage/user_forgot'
+            ]);
+    
+            if (!$forgot->has($key)) {
+                $item = $forgot->get($key);
+                $item->email = $email;
+                $item->expired = $expired;
+                $item->key = $key;
+                if($item->save()){
+                    $data = [
+                        'status' => 'success',
+                        'key' => $key,
+                        'expired' => $expired,
+                        'message' => 'Key will expired in 3 days.'
+                    ];
+                } else {
+                    $data = [
+                        'status' => 'error',
+                        'message' => 'Process saving failed, please try again!'
+                    ];    
+                }
+            } else {
+                $data = [
+                    'status' => 'error',
+                    'message' => 'Process generate failed, please try again!'
+                ];  
+            }
+        } else {
+            $data = [
+                'status' => 'error',
+                'message' => 'Email address not found! Please try again!'
             ];
         }
         return $data;

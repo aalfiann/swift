@@ -5,16 +5,9 @@ use \modules\session\middleware\SessionCheck;
 use \modules\session\helper\SessionHelper;
 use \modules\core\helper\EtagHelper;
 use \modules\user\User;
-use \Respect\Validation\Validator as v;
+use \modules\mailer\Mailer;
+use \modules\user\UserValidator as validator;
 use \DavidePastore\Slim\Validation\Validation;
-
-    //Create validator
-    $usernameValidator = v::alnum()->noWhitespace()->length(3, 20);
-    $emailValidator = v::email();
-    $registerValidators = array(
-        'username' => $usernameValidator,
-        'email' => $emailValidator
-    );
 
     // Get Login page
     $app->get('/login', function (Request $request, Response $response) {
@@ -72,7 +65,7 @@ use \DavidePastore\Slim\Validation\Validation;
         }
 
         return $this->view->render($response, "register.twig", $data);
-    })->add(new Validation($registerValidators))->add($container->get('csrf'));
+    })->add(new Validation(validator::register()))->add($container->get('csrf'));
 
     // Dashboard page
     $app->get('/dashboard', function (Request $request, Response $response) {
@@ -101,3 +94,55 @@ use \DavidePastore\Slim\Validation\Validation;
         ->withHeader('Content-Type','application/json; charset=utf-8')
         ->withBody($body);
     })->setName("/user/verify");
+
+    // Verify email
+    $app->post('/user/verify/email', function (Request $request, Response $response) {
+        $body = $response->getBody();
+        $datapost = $request->getParsedBody();
+        $user = new User();
+        $user->email = $datapost['email'];
+        $body->write(json_encode($user->verifyEmail()));
+        return $response->withStatus(200)
+        ->withHeader('Content-Type','application/json; charset=utf-8')
+        ->withBody($body);
+    })->setName("/user/verify/email");
+
+    // Get Forgot page
+    $app->get('/user/forgot', function (Request $request, Response $response) {
+        $body = $response->getBody();
+        $data = [
+            'status' => '',
+            'message' => ''
+        ];
+        return $this->view->render($response, "forgot.twig", $data);
+    })->setName("/user/forgot")->add($container->get('csrf'));
+
+    // Process forgot key
+    $app->post('/user/forgot', function (Request $request, Response $response) {
+        $body = $response->getBody();
+        $datapost = $request->getParsedBody();
+        $email = $datapost['email'];
+        $user = new User();
+        $user->email = $email;
+        $data = $user->generateForgotKey();
+        if($data['status'] == 'success'){
+            $linkverify = $request->getUri()->withPath($this->router->pathFor('/user/forgot/verify',['key'=>$data['key']]));
+            $mailer = new Mailer($this->settings);
+            $mailer->addAddress = $email;
+            $mailer->subject = 'Request reset password';
+            $mailer->body = '<html><body><p>You have already requested to reset password.<br /><br />
+            Here is the link to reset: <a href="'.$linkverify.'" target="_blank"><b>'.$linkverify.'</b></a>.<br /><br />
+            
+            Just ignore this email if You don\'t want to reset password. Link will be expired in 3 days.<br /><br /><br />
+            Thank You<br />
+            '.$this->settings['app']['name'].'</p></body></html>';
+            $result = $mailer->send();
+        } else {
+            $result = $data;
+        }
+        return $this->view->render($response, "forgot.twig", $result);
+    })->add($container->get('csrf'));
+
+    $app->get('/user/forgot/verify/{key}', function (Request $request, Response $response) {
+        return $this->view->render($response, "forgot-verify.twig", $result);
+    })->setName("/user/forgot/verify");
