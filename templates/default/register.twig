@@ -87,7 +87,7 @@
         
           {% if status == 'success' %}
           <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <span class="alert-inner--icon"><i class="ni ni-like-2"></i></span>
+            <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>
             <span class="alert-inner--text"><strong>Success!</strong> {{ message }}</span>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
               <span aria-hidden="true">&times;</span>
@@ -95,7 +95,7 @@
           </div>
           {% elseif status == 'error' %}
           <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <span class="alert-inner--icon"><i class="ni ni-like-2"></i></span>
+            <span class="alert-inner--icon"><i class="fas fa-exclamation-triangle"></i></span>
             <span class="alert-inner--text"><strong>Failed!</strong> {{ message }}
             {% if not problem is empty %}
               <br>Problem:<br>{{problem}}
@@ -228,10 +228,36 @@
         $('#checkemail').addClass('text-danger');
         $('#checkemail').html('Email address is invalid!');
       } else {
-        $('#g-email').addClass('has-success');
-        $('#i-email').addClass('is-valid');
-        $('#checkemail').addClass('text-success');
-        $('#checkemail').html('Email address is valid!');
+        $.ajax({
+          url: "{{ site_url ~ path_for('/') }}user/verify/email",
+          data: {email:$('#i-email').val()},
+          dataType: "json",
+          type: "post",
+          success: function(data) {
+            if (data.status == "success"){
+              $('#g-email').addClass('has-success');
+              $('#i-email').addClass('is-valid');
+              $('#checkemail').addClass('text-success');
+            } else {
+              $('#g-email').addClass('has-danger');
+              $('#i-email').addClass('is-invalid');
+              $('#checkemail').addClass('text-danger');
+            }
+            $('#checkemail').html(data.message);
+          },
+          error: function(x, e) {
+            if($$validate.isJson(x.responseText)){
+              var obj = JSON.parse(x.responseText);
+              console.log(obj.message);
+            } else {
+              console.log(x.responseText);
+            }
+          }
+        });
+        //$('#g-email').addClass('has-success');
+        //$('#i-email').addClass('is-valid');
+        //$('#checkemail').addClass('text-success');
+        //$('#checkemail').html('Email address is valid!');
       }
     }
   },1000));
