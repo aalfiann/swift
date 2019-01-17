@@ -20,6 +20,29 @@ $config['determineRouteBeforeAppMiddleware']    = false;
 //$config['routerCacheFile']                    = 'cache/routes.cache.php'; //Just uncomment if you are in production.
 
 /**
+ * Configuration SMTP for Mailer
+ *
+ * @var $config['smtp']['host'] is smtp host. example smtp.gmail.com
+ * @var $config['smtp']['autotls'] is make smtp will send using tls protocol as default
+ * @var $config['smtp']['auth'] will connect to smtp using authentication
+ * @var $config['smtp']['secure'] this is type of smtp security. You can use tls or ssl
+ * @var $config['smtp']['port'] this is port smtp
+ * @var $config['smtp']['defaultnamefrom'] this is default name from. You can filled with yourname / yourwebsitetitle
+ * @var $config['smtp']['username'] your username to login into smtp server
+ * @var $config['smtp']['password'] the password to login into smtp server
+ * @var $config['smtp']['debug'] get more information by set debug 1 - 4. Default is 0 for production. 
+ */
+$config['smtp']['host']             = 'smtp.gmail.com';
+$config['smtp']['autotls']          = false;
+$config['smtp']['auth']             = true;
+$config['smtp']['secure']           = 'tls';
+$config['smtp']['port']             = 587;
+$config['smtp']['defaultnamefrom']  = 'swift admin';
+$config['smtp']['username']         = 'youremail@gmail.com';
+$config['smtp']['password']         = 'secret';
+$config['smtp']['debug']            = 0;
+
+/**
  * Configuration App
  * 
  * @var $config['app']['name'] is the name of your application.
