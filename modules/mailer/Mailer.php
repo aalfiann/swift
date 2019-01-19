@@ -2,7 +2,6 @@
 namespace modules\mailer;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\SMTP;
 
 class Mailer {
     
@@ -17,8 +16,10 @@ class Mailer {
      * @var $subject = The subject of email
      * @var $body = The body of email
      * @var $isHtml = Email will using plain text or html. Default is true.
+     * @var $charSet = Set the char message. Default is using UTF-8.
+     * @var $encoding = Set the encoding of message. Default is base64.
      */
-    var $setFrom,$setFromName,$wordWrap=50,$addAddress,$addCC,$addBCC,$addAttachment,$subject,$body,$isHtml=true;
+    var $setFrom,$setFromName,$wordWrap=50,$addAddress,$addCC,$addBCC,$addAttachment,$subject,$body,$isHtml=true,$charSet='UTF-8',$encoding='base64';
 
     function __construct($settings=null) {
         if(!empty($settings)){
@@ -126,6 +127,8 @@ class Mailer {
             }
         
             //Content
+            $mail->CharSet = $this->charSet;
+            $mail->Encoding = $this->encoding;
             $mail->WordWrap = $this->wordWrap;
             $mail->isHTML($this->isHtml);                                           // Set email format to HTML
             $mail->Subject = filter_var($this->subject, FILTER_SANITIZE_STRING);
@@ -139,25 +142,21 @@ class Mailer {
                 ];
             }
 
-            $mail->send();
-            return [
-                'status' => 'success',
-                'message' => 'Message has been sent!'
-            ];
+            if($mail->send()){
+                return [
+                    'status' => 'success',
+                    'message' => 'Message has been sent!'
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'message' => 'Failed to send the message. Error: '. $mail->ErrorInfo
+                ];
+            }
         } catch (Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Message could not be sent. Mailer Error: '. $mail->ErrorInfo.'<br>
-                smtpHost : '.$this->smtpHost.'<br>
-                smtpAuth : '.$this->smtpAuth.'<br>
-                smtpSecure : '.$this->smtpSecure.'<br>
-                smtpUsername : '.$this->smtpUsername.'<br>
-                smtpPassword : '.$this->smtpPassword.'<br>
-                smtpPort : '.$this->smtpPort.'<br>
-                smtpAutoTLS : '.$this->smtpAutoTLS.'<br>
-                smtpDebug : '.$this->smtpDebug.'<br>
-                defaultNameFrom : '.$this->defaultNameFrom.'
-                '
+                'message' => 'Message could not be sent. Mailer Error: '. $e->getMessage()
             ];
         }
     }
