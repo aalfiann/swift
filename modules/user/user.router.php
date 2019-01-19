@@ -11,13 +11,11 @@ use \DavidePastore\Slim\Validation\Validation;
 
     // Get Login page
     $app->get('/login', function (Request $request, Response $response) {
-        $body = $response->getBody();
         return $this->view->render($response, "login.twig", []);
     })->setName("/login")->add($container->get('csrf'));
 
     // Post Login page
     $app->post('/login', function (Request $request, Response $response) {
-        $body = $response->getBody();
         $datapost = $request->getParsedBody();
         $user = new User();
         $user->username = $datapost['username'];
@@ -35,7 +33,6 @@ use \DavidePastore\Slim\Validation\Validation;
 
     // Get Register page
     $app->get('/register', function (Request $request, Response $response) {
-        $body = $response->getBody();
         $data = [
             'status' => '',
             'message' => ''
@@ -45,7 +42,6 @@ use \DavidePastore\Slim\Validation\Validation;
 
     // Post Register page
     $app->post('/register', function (Request $request, Response $response) {
-        $body = $response->getBody();
         $datapost = $request->getParsedBody();
         //Check the validation
         if($request->getAttribute('has_errors')){
@@ -69,14 +65,12 @@ use \DavidePastore\Slim\Validation\Validation;
 
     // Dashboard page
     $app->get('/dashboard', function (Request $request, Response $response) {
-        $body = $response->getBody();
         $response = $this->cache->withEtag($response, EtagHelper::updateByMinute());
         return $this->view->render($response, "dashboard.twig", []);
     })->setName("/dashboard")->add(new SessionCheck($app->getContainer()->get('router')));
 
     // Logout
     $app->get('/logout', function (Request $request, Response $response) {
-        $body = $response->getBody();
         $sh = new SessionHelper();
         $sh->destroy();
         $url = $request->getUri()->withPath($this->router->pathFor('/login'));
@@ -109,7 +103,6 @@ use \DavidePastore\Slim\Validation\Validation;
 
     // Get Forgot page
     $app->get('/user/forgot', function (Request $request, Response $response) {
-        $body = $response->getBody();
         $data = [
             'status' => '',
             'message' => ''
@@ -119,7 +112,6 @@ use \DavidePastore\Slim\Validation\Validation;
 
     // Process forgot key
     $app->post('/user/forgot', function (Request $request, Response $response) {
-        $body = $response->getBody();
         $datapost = $request->getParsedBody();
         $email = $datapost['email'];
         $user = new User();
@@ -144,5 +136,33 @@ use \DavidePastore\Slim\Validation\Validation;
     })->add($container->get('csrf'));
 
     $app->get('/user/forgot/verify/{key}', function (Request $request, Response $response) {
-        return $this->view->render($response, "forgot-verify.twig", $result);
-    })->setName("/user/forgot/verify");
+        $user = new User();
+        $user->key = $request->getAttribute('key');
+        if($user->isForgotKeyActive()){
+            $username = $user->getUsernameByForgotKey();
+            $data = [
+                'expired' => false,
+                'username' => $username,
+                'message' => ''
+            ];
+        } else {
+            $data = [
+                'expired' => true,
+                'username' => '',
+                'message' => 'The key is wrong or has been expired!'
+            ];
+        }
+        return $this->view->render($response, "reset-password.twig", $data);
+    })->setName("/user/forgot/verify")->add($container->get('csrf'));
+
+    $app->post('/user/forgot/verify/{key}', function (Request $request, Response $response) {
+        $datapost = $request->getParsedBody();
+        $user = new User();
+        $user->username = $datapost['username'];
+        $user->key = $request->getAttribute('key');
+        $user->password = $datapost['password'];
+        $user->password2 = $datapost['password2'];
+        $data = $user->resetPassword();
+        $data['expired'] = false;
+        return $this->view->render($response, "reset-password.twig", $data);
+    })->add($container->get('csrf'));

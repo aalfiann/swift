@@ -235,4 +235,146 @@ class User {
         }
         return $data;
     }
+
+    /**
+     * Determine Forgot Key is active or not
+     * 
+     * @return bool
+     */
+    public function isForgotKeyActive(){
+        $key = $this->key;
+        
+        $user = new \Filebase\Database([
+            'dir' => 'storage/user_forgot'
+        ]);
+
+        if ($user->has($key)) {
+            $item = $user->get($key);
+            if(strtotime(date('Y-m-d H:i:s')) <= $item->expired){
+                return true;
+            } else {
+                $item->delete();
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get Username by Forgot Key
+     * 
+     * @return string
+     */
+    public function getUsernameByForgotKey(){
+        $key = $this->key;
+
+        //get email
+        $user_forgot = new \Filebase\Database([
+            'dir' => 'storage/user_forgot'
+        ]);
+
+        $item = $user_forgot->get($key);
+        $email = $item->email;
+
+        //get username
+        $user = new \Filebase\Database([
+            'dir' => 'storage/user'
+        ]);
+
+        $list = $user->query()->where('email','=',$email)->limit(1)->results();
+        if(!empty($list)){
+            if(!empty($list[0]['username'])){
+                return $list[0]['username'];
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Reset Password
+     * 
+     * @return array
+     */
+    public function resetPassword(){
+        $username = $this->username;
+        $password = $this->password;
+        $password2 = $this->password2;
+        
+        if($password != $password2) {
+            return [
+                'status' => 'error',
+                'message' => 'Password is not match!'
+            ];
+        }
+
+        $user = new \Filebase\Database([
+            'dir' => 'storage/user'
+        ]);
+
+        if ($user->has($username)) {
+            $item = $user->get($username);
+            $item->hash = $this->hashPassword($username,$password2);
+            if($item->save()){
+                $this->deleteForgotKey();
+                $data = [
+                    'status' => 'success',
+                    'message' => 'Reset password successful!'
+                ];
+            } else {
+                $data = [
+                    'status' => 'error',
+                    'message' => 'Process saving failed, please try again!'
+                ];
+            }
+        } else {
+            $data = [
+                'status' => 'error',
+                'message' => 'Something happened, please reload page!'
+            ];
+        }
+        return $data;
+    }
+
+    /**
+     * Delete Forgot Key
+     * 
+     * @return bool
+     */
+    public function deleteForgotKey(){
+        $key = $this->key;
+        $user = new \Filebase\Database([
+            'dir' => 'storage/user_forgot'
+        ]);
+        if ($user->has($key)) {
+            $item = $user->get($key);
+            return $item->delete();
+        }
+        return false;
+    }
+
+    /**
+     * Change Password
+     * 
+     * @return bool
+     */
+    public function changePassword(){
+        $username = $this->username;
+        $password = $this->password;
+        $password2 = $this->password2;
+
+        if(!empty($username) && (!empty($password) || !empty($password2))){
+            $user = new \Filebase\Database([
+                'dir' => 'storage/user'
+            ]);
+    
+            if ($user->has($username)) {
+                $item = $user->get($username);
+                $item->hash = $this->hashPassword($username,$password2);
+                if($item->save()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
