@@ -70,7 +70,7 @@
 {% endblock %}
 {% block main_title %}
   <!-- Brand -->
-  <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="./index.html">Login</a>
+  <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="{{currentPath}}">Login</a>
 {% endblock %}
 {% block content_body %}
   <div class="row">
@@ -111,7 +111,7 @@
                   </div>
                 </div>
                 
-                <span class="text-muted">Forgot Password?</span>
+                <span class="text-muted"><a href="{{ path_for('/user/forgot')}}">Forgot Password?</a></span>
                 <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
                 <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
                 <div class="text-center">
