@@ -95,6 +95,16 @@ class User {
                 $item->username = $username;
                 $item->email = $email;
                 $item->hash = $this->hashPassword($username,$password);
+                $item->auth = [
+                        [
+                            'pattern' => '/dashboard',
+                            'method' => ['GET','POST']
+                        ],
+                        [
+                            'pattern' => '/my-profile',
+                            'method' => ['GET','POST']
+                        ]
+                    ];
                 if($item->save()){
                     $data = [
                         'status' => 'success',

@@ -1,11 +1,15 @@
 <?php
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
+
 use \modules\session\middleware\SessionCheck;
 use \modules\session\helper\SessionHelper;
+
 use \modules\core\helper\EtagHelper;
-use \modules\user\User;
 use \modules\mailer\Mailer;
+
+use \modules\user\User;
+use \modules\user\middleware\UserAuth;
 use \modules\user\UserValidator as validator;
 use \DavidePastore\Slim\Validation\Validation;
 
@@ -67,7 +71,7 @@ use \DavidePastore\Slim\Validation\Validation;
     $app->get('/dashboard', function (Request $request, Response $response) {
         $response = $this->cache->withEtag($response, EtagHelper::updateByMinute());
         return $this->view->render($response, "dashboard.twig", []);
-    })->setName("/dashboard")->add(new SessionCheck($app->getContainer()->get('router')));
+    })->setName("/dashboard")->add(new UserAuth)->add(new SessionCheck($container->get('router')));
 
     // Logout
     $app->get('/logout', function (Request $request, Response $response) {
