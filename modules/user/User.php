@@ -23,7 +23,7 @@ class User extends UserHelper {
         $password = $this->password;
 
         $user = new \Filebase\Database([
-            'dir' => 'storage/user'
+            'dir' => $this->getDataSource()
         ]);
 
         if ($user->has($username)) {
@@ -60,15 +60,17 @@ class User extends UserHelper {
         }
 
         $user = new \Filebase\Database([
-            'dir' => 'storage/user'
+            'dir' => $this->getDataSource()
         ]);
 
         if (!$user->has($username)) {
             if(!$this->isEmailRegistered()) {
                 $item = $user->get($username);
+                $item->created_at = date('Y-m-d H:i:s');
                 $item->username = $username;
                 $item->email = $email;
                 $item->hash = $this->hashPassword($username,$password);
+                $item->status = 'active';
                 $item->auth = [
                         [
                             'pattern' => '/dashboard',
@@ -114,7 +116,7 @@ class User extends UserHelper {
         $username = $this->username;
 
         $user = new \Filebase\Database([
-            'dir' => 'storage/user'
+            'dir' => $this->getDataSource()
         ]);
 
         if (!$user->has($username)) {
@@ -163,7 +165,7 @@ class User extends UserHelper {
             $key = $guid->generate_short_dechex();
             $expired = strtotime(date('Y-m-d H:i:s').' + 3 day');
             $forgot = new \Filebase\Database([
-                'dir' => 'storage/user_forgot'
+                'dir' => $this->getDataSourceForgot()
             ]);
     
             if (!$forgot->has($key)) {
@@ -209,7 +211,7 @@ class User extends UserHelper {
 
         //get email
         $user_forgot = new \Filebase\Database([
-            'dir' => 'storage/user_forgot'
+            'dir' => $this->getDataSourceForgot()
         ]);
 
         $item = $user_forgot->get($key);
@@ -217,7 +219,7 @@ class User extends UserHelper {
 
         //get username
         $user = new \Filebase\Database([
-            'dir' => 'storage/user'
+            'dir' => $this->getDataSource()
         ]);
 
         $list = $user->query()->where('email','=',$email)->limit(1)->results();
@@ -247,7 +249,7 @@ class User extends UserHelper {
         }
 
         $user = new \Filebase\Database([
-            'dir' => 'storage/user'
+            'dir' => $this->getDataSource()
         ]);
 
         if ($user->has($username)) {
@@ -282,7 +284,7 @@ class User extends UserHelper {
     public function deleteForgotKey(){
         $key = $this->key;
         $user = new \Filebase\Database([
-            'dir' => 'storage/user_forgot'
+            'dir' => $this->getDataSourceForgot()
         ]);
         if ($user->has($key)) {
             $item = $user->get($key);
@@ -303,7 +305,7 @@ class User extends UserHelper {
 
         if(!empty($username) && (!empty($password) || !empty($password2))){
             $user = new \Filebase\Database([
-                'dir' => 'storage/user'
+                'dir' => $this->getDataSource()
             ]);
     
             if ($user->has($username)) {

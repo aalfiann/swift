@@ -10,6 +10,24 @@ use \aalfiann\Filebase;
  * @license    https://github.com/aalfiann/swift-modules-user/blob/master/LICENSE.md  MIT License
  */
 class UserHelper {
+
+    /**
+     * Data Source User
+     * 
+     * @return string
+     */
+    public function getDataSource(){
+        return 'storage/user';
+    }
+
+    /**
+     * Data Source User Forgot
+     * 
+     * @return string
+     */
+    public function getDataSourceForgot(){
+        return 'storage/user_forgot';
+    }
     
     /** 
      * HashPassword is to secure your login and password
@@ -40,16 +58,22 @@ class UserHelper {
     /**
      * Determine registered email
      * 
+     * @param username this is to skip email check to same username, to allow update same email on same username.
+     * 
      * @return bool
      */
-    public function isEmailRegistered(){
+    public function isEmailRegistered($username=null){
         $email = $this->email;
         
         $user = new \Filebase\Database([
             'dir' => 'storage/user'
         ]);
 
-        $list = $user->query()->where('email','=',$email)->limit(1)->results();
+        if(!empty($username)){
+            $list = $user->query()->where('email','=',$email)->andWhere('username','!=',$username)->limit(1)->results();
+        } else {
+            $list = $user->query()->where('email','=',$email)->limit(1)->results();
+        }
         if(!empty($list)){
             if($list[0]['email'] == $email) {
                 return true;
