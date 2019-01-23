@@ -182,14 +182,17 @@ class UserManager extends UserHelper {
             ->orWhere('email','LIKE',$search)
             ->orWhere('status','LIKE',$search);
 
-        // List after pagination
-        $list2 = $list1->limit($itemperpage,$offset)
-            ->orderBy('created_at','DESC');
-
         // total records
         $total_records = $list1->count();
         // total pages
         $total_pages = ceil($total_records/$itemperpage);
+        
+        // List after pagination
+        $list2 = $list1->limit($itemperpage,$offset)
+            ->orderBy('created_at','DESC');
+
+        // total items
+        $total_items = $list2->count();
 
         if(!empty($list2->results())){
             return [
@@ -198,11 +201,73 @@ class UserManager extends UserHelper {
                 'message' => 'Data found!',
                 'metadata' => [
                     'record_total' => $total_records,
-                    'record_count' => $list2->count(),
+                    'record_count' => $total_items,
                     'number_item_first' => (int)((($page-1)*$itemperpage)+1),
-                    'number_item_last' => (int)((($page-1)*$itemperpage)+$list2->count()),
+                    'number_item_last' => (int)((($page-1)*$itemperpage)+$total_items),
                     'itemperpage' => (int)$itemperpage,
                     'page_now' => (int)$page,
+                    'page_total' => $total_pages
+                ]
+            ];
+        } else {
+            return [
+                'status' => 'error',
+                'message' => 'Data not found!'
+            ];
+        }
+    }
+
+    /**
+     * Index for jQuery DataTables serverside only
+     * 
+     * @return array
+     */
+    public function indexDatatables() {
+        $search = $this->search;
+        $length = $this->length;
+        $offset = $this->start;
+        $draw = $this->draw;
+        $column = $this->column;
+        $sort = $this->sort;
+
+        $user = new \Filebase\Database([
+            'dir' => $this->getDataSource()
+        ]);
+
+        $columns = ['username','email','status','created_at','updated_at'];
+
+        // List before pagination
+        $list1 = $user->query()->select($columns)
+            ->where('username','LIKE',$search)
+            ->orWhere('email','LIKE',$search)
+            ->orWhere('status','LIKE',$search);
+
+        // total records
+        $total_records = $list1->count();
+
+        // total pages
+        $total_pages = ceil($total_records/$length);
+
+        // List after pagination
+        $list2 = $list1->limit($length,$offset)
+            ->orderBy($columns[$column],strtoupper($sort));
+
+        // total items
+        $total_items = $list2->count();
+
+        if(!empty($list2->results())){
+            return [
+                'draw' => (int)$this->draw,
+                'recordsTotal' => $total_records,
+                'recordsFiltered' => $total_records,
+                'data' => $list2->results(),
+                'status' => 'success',
+                'message' => 'Data found!',
+                'metadata' => [
+                    'start' => (int)$offset+1,
+                    'number_item_first' => (int)((($offset)*$length)+1),
+                    'number_item_last' => (int)((($offset)*$length)+$total_items),
+                    'length' => (int)$length,
                     'page_total' => $total_pages
                 ]
             ];
@@ -256,4 +321,13 @@ class UserManager extends UserHelper {
         ];
     }
 
+    /**
+     * Show data option for User Role
+     */
+    public function optionRole(){
+        return [
+            'admin',
+            'user'
+        ];
+    }
 }

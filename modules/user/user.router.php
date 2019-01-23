@@ -9,6 +9,7 @@ use \modules\core\helper\EtagHelper;
 use \modules\mailer\Mailer;
 
 use \modules\user\User;
+use \modules\user\UserManager;
 use \modules\user\middleware\UserAuth;
 use \modules\user\UserValidator as validator;
 use \DavidePastore\Slim\Validation\Validation;
@@ -139,6 +140,7 @@ use \DavidePastore\Slim\Validation\Validation;
         return $this->view->render($response, "forgot.twig", $result);
     })->add($container->get('csrf'));
 
+    // Get verify page
     $app->get('/user/forgot/verify/{key}', function (Request $request, Response $response) {
         $user = new User();
         $user->key = $request->getAttribute('key');
@@ -159,6 +161,7 @@ use \DavidePastore\Slim\Validation\Validation;
         return $this->view->render($response, "reset-password.twig", $data);
     })->setName("/user/forgot/verify")->add($container->get('csrf'));
 
+    // Process reset password
     $app->post('/user/forgot/verify/{key}', function (Request $request, Response $response) {
         $datapost = $request->getParsedBody();
         $user = new User();
@@ -170,3 +173,51 @@ use \DavidePastore\Slim\Validation\Validation;
         $data['expired'] = false;
         return $this->view->render($response, "reset-password.twig", $data);
     })->add($container->get('csrf'));
+
+    // Data user page
+    $app->get('/data-user', function (Request $request, Response $response) {
+        $response = $this->cache->withEtag($response, EtagHelper::updateByMinute());
+        return $this->view->render($response, "data-user.twig", []);
+    })->setName("/data-user")->add(new SessionCheck($container->get('router')));
+
+    // API Get User Data by Username
+    $app->get('/user/info/api/json/{username}', function (Request $request, Response $response) {
+        $body = $response->getBody();
+        $response = $this->cache->withEtag($response, EtagHelper::updateByMinute());
+        $user = new UserManager();
+        $user->username = $request->getAttribute('username');
+        $body->write(json_encode($user->read()));
+        return $response->withStatus(200)
+        ->withHeader('Content-Type','application/json; charset=utf-8')
+        ->withBody($body);
+    })->setName("/user/data/api");
+
+    // API Data User for global use 
+    $app->get('/user/data/api/json/{page}/{itemperpage}', function (Request $request, Response $response) {
+        $body = $response->getBody();
+        $response = $this->cache->withEtag($response, EtagHelper::updateByMinute());
+        $user = new UserManager();
+        $user->search = (!empty($_GET['search'])?$_GET['search']:'');
+        $user->page = $request->getAttribute('page');
+        $user->itemperpage = $request->getAttribute('itemperpage');
+        $body->write(json_encode($user->index()));
+        return $response->withStatus(200)
+        ->withHeader('Content-Type','application/json; charset=utf-8')
+        ->withBody($body);
+    })->setName("/user/data/api/global");
+
+    // API Data User for DataTables ServerSide use
+    $app->post('/user/data/api/json/datatables', function (Request $request, Response $response) {
+        $body = $response->getBody();
+        $user = new UserManager();
+        $user->draw = (!empty($_POST['draw'])?$_POST['draw']:'1');
+        $user->search = (!empty($_POST['search']['value'])?$_POST['search']['value']:'');
+        $user->start = (!empty($_POST['start'])?$_POST['start']:'0');
+        $user->length = (!empty($_POST['length'])?$_POST['length']:'10');
+        $user->column = (!empty($_POST['order'][0]['column'])?$_POST['order'][0]['column']:0);
+        $user->sort = (!empty($_POST['order'][0]['dir'])?$_POST['order'][0]['dir']:'asc');
+        $body->write(json_encode($user->indexDatatables()));
+        return $response->withStatus(200)
+        ->withHeader('Content-Type','application/json; charset=utf-8')
+        ->withBody($body);
+    })->setName("/user/data/api/datatables");
