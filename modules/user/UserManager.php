@@ -37,7 +37,7 @@ class UserManager extends UserHelper {
         if (!$user->has($username)) {
             if(!$this->isEmailRegistered()) {
                 $item = $user->get($username);
-                $item->created_at = strtotime(date('Y-m-d H:i:s'));
+                $item->created_at = date('Y-m-d H:i:s');
                 $item->username = $username;
                 $item->email = $email;
                 $item->hash = $this->hashPassword($username,$password);
@@ -99,7 +99,7 @@ class UserManager extends UserHelper {
                 $item->username = $username;
                 $item->email = $email;
                 $item->status = $status;
-                $item->updated_at = strtotime(date('Y-m-d H:i:s'));
+                $item->updated_at = date('Y-m-d H:i:s');
                 $item->updated_by = $updated_by;
                 if($item->save()){
                     $data = [
@@ -188,7 +188,7 @@ class UserManager extends UserHelper {
 
         // total records
         $total_records = $list1->count();
-        // total page
+        // total pages
         $total_pages = ceil($total_records/$itemperpage);
 
         if(!empty($list2->results())){
