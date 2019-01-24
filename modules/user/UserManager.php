@@ -234,7 +234,7 @@ class UserManager extends UserHelper {
             'dir' => $this->getDataSource()
         ]);
 
-        $columns = ['username','email','status','created_at','updated_at'];
+        $columns = ['username','email','status','created_at','updated_at','updated_by'];
 
         // List before pagination
         $list1 = $user->query()->select($columns)
