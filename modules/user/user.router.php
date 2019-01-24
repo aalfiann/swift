@@ -190,7 +190,7 @@ use \DavidePastore\Slim\Validation\Validation;
         return $response->withStatus(200)
         ->withHeader('Content-Type','application/json; charset=utf-8')
         ->withBody($body);
-    })->setName("/user/data/api");
+    })->setName("/user/info/api/json");
 
     // API Data User for global use 
     $app->get('/user/data/api/json/{page}/{itemperpage}', function (Request $request, Response $response) {
@@ -204,7 +204,7 @@ use \DavidePastore\Slim\Validation\Validation;
         return $response->withStatus(200)
         ->withHeader('Content-Type','application/json; charset=utf-8')
         ->withBody($body);
-    })->setName("/user/data/api/global");
+    })->setName("/user/data/api/json");
 
     // API Data User for DataTables ServerSide use
     $app->post('/user/data/api/json/datatables', function (Request $request, Response $response) {
@@ -220,4 +220,4 @@ use \DavidePastore\Slim\Validation\Validation;
         return $response->withStatus(200)
         ->withHeader('Content-Type','application/json; charset=utf-8')
         ->withBody($body);
-    })->setName("/user/data/api/datatables");
+    })->setName("/user/data/api/json/datatables");
