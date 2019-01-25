@@ -273,6 +273,10 @@ class UserManager extends UserHelper {
             ];
         } else {
             return [
+                'draw' => (int)$this->draw,
+                'recordsTotal' => 0,
+                'recordsFiltered' => 0,
+                'data' => [],
                 'status' => 'error',
                 'message' => 'Data not found!'
             ];
