@@ -184,27 +184,52 @@ use \DavidePastore\Slim\Validation\Validation;
     $app->get('/user/info/api/json/{username}', function (Request $request, Response $response) {
         $body = $response->getBody();
         $response = $this->cache->withEtag($response, EtagHelper::updateByMinute());
-        $user = new UserManager();
-        $user->username = $request->getAttribute('username');
-        $body->write(json_encode($user->read()));
+        if($request->getAttribute('has_errors')){
+            $errors = $request->getAttribute('errors');
+            $data = [
+                'status' => 'error',
+                'message' => 'Parameter is not valid! ',
+                'problem' => $errors
+            ];
+            $body->write(json_encode($data));
+        } else {
+            $user = new UserManager();
+            $user->username = $request->getAttribute('username');
+            $body->write(json_encode($user->read()));
+        }
         return $response->withStatus(200)
         ->withHeader('Content-Type','application/json; charset=utf-8')
         ->withBody($body);
-    })->setName("/user/info/api/json")->add(new SessionCheck($container->get('router')));
+    })->setName("/user/info/api/json")
+        ->add(new Validation(validator::userinfo()))
+        ->add(new SessionCheck($container->get('router')));
 
     // API Data User for global use 
     $app->get('/user/data/api/json/{page}/{itemperpage}', function (Request $request, Response $response) {
         $body = $response->getBody();
         $response = $this->cache->withEtag($response, EtagHelper::updateByMinute());
-        $user = new UserManager();
-        $user->search = (!empty($_GET['search'])?$_GET['search']:'');
-        $user->page = $request->getAttribute('page');
-        $user->itemperpage = $request->getAttribute('itemperpage');
-        $body->write(json_encode($user->index()));
+        if($request->getAttribute('has_errors')){
+            $errors = $request->getAttribute('errors');
+            $data = [
+                'status' => 'error',
+                'message' => 'Parameter is not valid! ',
+                'problem' => $errors
+            ];
+            $body->write(json_encode($data));
+        } else {
+            $user = new UserManager();
+            $user->search = (!empty($_GET['search'])?$_GET['search']:'');
+            $user->page = $request->getAttribute('page');
+            $user->itemperpage = $request->getAttribute('itemperpage');
+            $body->write(json_encode($user->index()));
+        }
+        
         return $response->withStatus(200)
         ->withHeader('Content-Type','application/json; charset=utf-8')
         ->withBody($body);
-    })->setName("/user/data/api/json")->add(new SessionCheck($container->get('router')));
+    })->setName("/user/data/api/json")
+        ->add(new Validation(validator::index()))
+        ->add(new SessionCheck($container->get('router')));
 
     // API Data User for DataTables ServerSide use
     $app->post('/user/data/api/json/datatables', function (Request $request, Response $response) {

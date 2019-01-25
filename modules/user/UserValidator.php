@@ -16,4 +16,18 @@ class UserValidator {
             'email' => v::email()
         ];
     }
+
+    public static function index(){
+        return [
+            'page' => v::intVal(),
+            'itemperpage' => v::intVal(),
+            'search' => v::length(0, 20)
+        ];
+    }
+
+    public static function userinfo(){
+        return [
+            'username' => v::alnum()->noWhitespace()->length(3, 20)
+        ];
+    }
 }
