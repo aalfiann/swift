@@ -207,10 +207,7 @@
   getScript('{{ site_url ~ path_for('/') }}assets/vendor/chart.js/dist/Chart.min.js',function(){
     getScript('{{ site_url ~ path_for('/') }}assets/vendor/chart.js/dist/Chart.extension.js',function(){
       getScript('{{ site_url ~ path_for('/') }}assets/js/argon.js?v={{ global.app.version }}',function(){
-        getScript('https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.18/b-1.5.4/b-colvis-1.5.4/b-flash-1.5.4/b-html5-1.5.4/b-print-1.5.4/r-2.2.2/datatables.min.js',function(){
-          getScript('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js',function(){
-            getScript('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js');
-          });
+        getScript('{{ site_url ~ path_for('/') }}assets/vendor/datatables/datatables.min.js',function(){
           var selectCol = [ 0, 1, 2, 3, 4, 5 , 6 ];
           var table = $('#example').DataTable({
             dom: "Brftlpi",
@@ -278,15 +275,14 @@
                 }
               },
               { 
-                className: 'text-right',render: function(data,type,row,meta) {
+                className: 'text-right', render: function(data,type,row,meta) {
                   return '<div class="dropdown">\
                         <a class="btn btn-sm btn-icon-only text-primary bg-secondary" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
                           <i class="fas fa-ellipsis-v"></i>\
                         </a>\
                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">\
-                          <a class="dropdown-item" href="#">Action</a>\
-                          <a class="dropdown-item" href="#">Another action</a>\
-                          <a class="dropdown-item" href="#">Something else here</a>\
+                          <a class="dropdown-item" href="#">Edit User</a>\
+                          <a class="dropdown-item" href="#">Edit Role</a>\
                         </div>\
                       </div>';
                 }
@@ -348,5 +344,5 @@
       });
     });
   });
-  getStyle('https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.18/b-1.5.4/b-colvis-1.5.4/b-flash-1.5.4/b-html5-1.5.4/b-print-1.5.4/r-2.2.2/datatables.min.css');
+  getStyle('{{ site_url ~ path_for('/') }}assets/vendor/datatables/datatables.min.css');
 {% endblock %}
