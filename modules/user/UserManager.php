@@ -12,6 +12,12 @@ use \aalfiann\Filebase;
 
 class UserManager extends UserHelper {
 
+    protected $limitData=1000;
+
+    private function isLimitAllowed($number){
+        return (($this->limitData>=$number)?true:false);
+    }
+
     /**
      * Add User
      * 
@@ -171,6 +177,14 @@ class UserManager extends UserHelper {
         $page = $this->page;
         $itemperpage = $this->itemperpage;
         $offset = (((($page-1)*$itemperpage) <= 0)?0:(($page-1)*$itemperpage));
+
+        //Check is limit allowed
+        if(!$this->isLimitAllowed($itemperpage)) {
+            return [
+                'status' => 'error',
+                'message' => 'Too many data to display!'
+            ];
+        }
 
         $user = new \Filebase\Database([
             'dir' => $this->getDataSource()
