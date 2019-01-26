@@ -99,6 +99,11 @@ $container['view'] = function ($container) {
     return $view;
 };
 
+// Register component Flash Messages
+$container['flash'] = function () {
+    return new \Slim\Flash\Messages();
+};
+
 // Override the default Not Found Handler
 $container['notFoundHandler'] = function ($container) {
     return function ($request, $response) use ($container) {

@@ -11,6 +11,7 @@ Serverless **(No database required)** and secured with **CSRF**.
 - CSRF Guard >> slim/csrf
 - TWIG Template >> slim/twig-view
 - HTTP Cache >> slim/http-cache
+- Flash Messages >> slim/flash
 - Logger >> monolog/monolog
 - Filebase >> aalfiann/filebase
 - Validation >> davidepastore/slim-validation
