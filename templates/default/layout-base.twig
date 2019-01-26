@@ -69,9 +69,12 @@
       </div>
     </nav>
     <!-- Header -->
+    {% block pageheader %}
     <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
       {% block content_header %}{% endblock %}
     </div>
+    {% endblock %}
+    {% block pagecontent %}
     <!-- Page content -->
     <div class="container-fluid mt--9">
       {% block content_body %}{% endblock %}
@@ -104,6 +107,7 @@
       </footer>
       {% endblock %}
     </div>
+    {% endblock %}
   </div>
 {% endblock %}
 
