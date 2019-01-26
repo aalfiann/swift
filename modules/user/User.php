@@ -31,7 +31,8 @@ class User extends UserHelper {
             if($this->verifyPassword($username,$password,$item->hash)) {
                 return [
                     'status' => 'success',
-                    'message' => 'Login successful!'
+                    'message' => 'Login successful!',
+                    'avatar' => $user->avatar
                 ];
             }
         }
