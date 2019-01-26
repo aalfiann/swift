@@ -29,6 +29,7 @@ use \DavidePastore\Slim\Validation\Validation;
         if($data['status'] == 'success') {
             $sh = new SessionHelper();
             $sh->set('username',$user->username);
+            $sh->set('avatar',$data['avatar']);
             $url = $request->getUri()->withPath($this->router->pathFor('/dashboard'));
             return $response->withRedirect($url);
         }
@@ -174,10 +175,73 @@ use \DavidePastore\Slim\Validation\Validation;
         return $this->view->render($response, "reset-password.twig", $data);
     })->add($container->get('csrf'));
 
+    // GET Profile page
+    $app->get('/my-profile', function (Request $request, Response $response) {
+        $sh = new SessionHelper();
+        $user = new UserManager();
+        $user->username = $sh->get('username'); 
+        $data = $user->read();
+        // Remove the data status from reading data
+        if($data['status'] == 'success') {
+            unset($data['status']);
+            unset($data['message']);
+        }
+        // Get if there is any flash message before request
+        if($this->flash->hasMessage('update')){
+            $message = $this->flash->getMessage('update');
+            // create new data status for response in twig
+            $data['status'] = $message[0]['status'];
+            $data['message'] = $message[0]['message'];
+            $data['problem'] = $message[0]['problem'];
+        }
+        return $this->view->render($response, "profile.twig", $data);
+    })->setName("/my-profile")->add(new SessionCheck($container->get('router')));
+
+    // POST Profile page
+    $app->post('/my-profile', function (Request $request, Response $response) {
+        if($request->getAttribute('has_errors')){
+            $errors = $request->getAttribute('errors');
+            $data = [
+                'status' => 'error',
+                'message' => 'Parameter is not valid! ',
+                'problem' => json_encode($errors)
+            ];
+        } else {
+            $datapost = $request->getParsedBody();
+            $sh = new SessionHelper();
+            $user = new UserManager();
+            $user->username = $sh->get('username');
+            $user->email = $datapost['email'];
+            $user->firstname = $datapost['firstname'];
+            $user->lastname = $datapost['lastname'];
+            $user->address = $datapost['address'];
+            $user->city = $datapost['city'];
+            $user->country = $datapost['country'];
+            $user->postal = $datapost['postal'];
+            $user->avatar = $datapost['avatar'];
+            $user->background_image = $datapost['background_image'];
+            $user->about = $datapost['about'];
+            $user->updated_by = $user->username;
+            $data = $user->update();
+            $data['problem'] = '';
+        }
+
+        // Create flash message to next redirected url
+        $this->flash->addMessage('update',['status' => $data['status'],'message' => $data['message'],'problem' => $data['problem']]);
+        // Redirect to same page
+        $url = $request->getUri()->withPath($this->router->pathFor('/my-profile'));
+        return $response->withRedirect($url);
+    })->setName("/my-profile")
+        ->add(new Validation(validator::update()))
+        ->add(new SessionCheck($container->get('router')));
+
     // Data user page
     $app->get('/data-user', function (Request $request, Response $response) {
         $response = $this->cache->withEtag($response, EtagHelper::updateByMinute());
-        return $this->view->render($response, "data-user.twig", []);
+        $sh = new SessionHelper();
+        $data['username'] = $sh->get('username');
+        $data['avatar'] = $sh->get('avatar');
+        return $this->view->render($response, "data-user.twig", $data);
     })->setName("/data-user")->add(new SessionCheck($container->get('router')));
 
     // API Get User Data by Username
