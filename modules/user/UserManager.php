@@ -24,12 +24,8 @@ class UserManager extends UserHelper {
      * @return array
      */
     public function add() {
-        $username = $this->username;
-        $password = $this->password;
-        $password2 = $this->password2;
-        $email = $this->email;
 
-        if($password != $password2) {
+        if($this->password != $this->password2) {
             return [
                 'status' => 'error',
                 'message' => 'Password is not match!'
@@ -40,13 +36,13 @@ class UserManager extends UserHelper {
             'dir' => $this->getDataSource()
         ]);
 
-        if (!$user->has($username)) {
+        if (!$user->has($this->username)) {
             if(!$this->isEmailRegistered()) {
-                $item = $user->get($username);
+                $item = $user->get($this->username);
                 $item->created_at = date('Y-m-d H:i:s');
-                $item->username = $username;
-                $item->email = $email;
-                $item->hash = $this->hashPassword($username,$password);
+                $item->username = $this->username;
+                $item->email = $this->email;
+                $item->hash = $this->hashPassword($this->username,$this->password);
                 $item->status = 'active';
                 $item->auth = [
                         [
@@ -90,23 +86,24 @@ class UserManager extends UserHelper {
      * @return array
      */
     public function update() {
-        $username = $this->username;
-        $email = $this->email;
-        $status = $this->status;
-        $updated_by = $this->updated_by;
-
         $user = new \Filebase\Database([
             'dir' => $this->getDataSource()
         ]);
 
-        if ($user->has($username)) {
-            if(!$this->isEmailRegistered($username)) {
-                $item = $user->get($username);
-                $item->username = $username;
-                $item->email = $email;
-                $item->status = $status;
+        if ($user->has($this->username)) {
+            if(!$this->isEmailRegistered($this->username)) {
+                $item = $user->get($this->username);
+                $item->firstname = $this->firstname;
+                $item->lastname = $this->lastname;
+                $item->address = $this->address;
+                $item->city = $this->city;
+                $item->country = $this->country;
+                $item->postal = $this->postal;
+                $item->avatar = $this->avatar;
+                $item->background_image = $this->background_image;
+                $item->about = $this->about;
                 $item->updated_at = date('Y-m-d H:i:s');
-                $item->updated_by = $updated_by;
+                $item->updated_by = $this->updated_by;
                 if($item->save()){
                     $data = [
                         'status' => 'success',
@@ -139,14 +136,12 @@ class UserManager extends UserHelper {
      * @return array
      */
     public function delete() {
-        $username = $this->username;
-
         $user = new \Filebase\Database([
             'dir' => $this->getDataSource()
         ]);
 
-        if ($user->has($username)) {
-            $item = $user->get($username);
+        if ($user->has($this->username)) {
+            $item = $user->get($this->username);
             if($item->delete()){
                 $data = [
                     'status' => 'success',
@@ -303,14 +298,12 @@ class UserManager extends UserHelper {
      * @return array
      */
     public function read() {
-        $username = $this->username;
-
         $user = new \Filebase\Database([
             'dir' => $this->getDataSource()
         ]);
 
-        if ($user->has($username)) {
-            $item = $user->get($username);
+        if ($user->has($this->username)) {
+            $item = $user->get($this->username);
             $data = $item->toArray();
             unset($data['hash']); // remove hashed password
             $data['created_at'] = $item->createdAt();
