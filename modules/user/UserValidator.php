@@ -40,7 +40,7 @@ class UserValidator {
             'address' => v::length(0,150),
             'city' => v::length(0,50),
             'country' => v::length(0,50),
-            'postal' => v::intVal()->length(0,6),
+            'postal' => v::optional(v::intVal()->length(0,6)),
             'about' => v::length(0,150),
             'avatar' => v::optional(v::url()->length(0,250)),
             'background_image' => v::optional(v::url()->length(0,250))
