@@ -21,9 +21,9 @@
               <i class="ni ni-single-02"></i>
               <span>My profile</span>
             </a>
-            <a href="./examples/profile.html" class="dropdown-item">
-              <i class="ni ni-settings-gear-65"></i>
-              <span>Settings</span>
+            <a href="{{ site_url ~ path_for('/change-password') }}" class="dropdown-item">
+              <i class="fas fa-key"></i>
+              <span>Change Password</span>
             </a>
             <div class="dropdown-divider"></div>
             <a href="{{ site_url ~ path_for('/logout') }}" class="dropdown-item">
@@ -53,9 +53,9 @@
                 <i class="ni ni-single-02"></i>
                 <span>My profile</span>
               </a>
-              <a href="./examples/profile.html" class="dropdown-item">
-                <i class="ni ni-settings-gear-65"></i>
-                <span>Settings</span>
+              <a href="{{ site_url ~ path_for('/change-password') }}" class="dropdown-item">
+                <i class="fas fa-key"></i>
+                <span>Change Password</span>
               </a>
               <div class="dropdown-divider"></div>
               <a href="{{ site_url ~ path_for('/logout') }}" class="dropdown-item">
@@ -216,13 +216,14 @@
                     <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label" for="input-username">Username</label>
-                        <input name="username" type="text" id="input-username" class="form-control form-control-alternative" placeholder="Username" value="{{result.username}}">
+                        <input name="username" type="text" id="input-username" class="form-control form-control-alternative" placeholder="Username" value="{{result.username}}" readonly>
                       </div>
                     </div>
                     <div class="col-lg-6">
-                      <div class="form-group">
-                        <label class="form-control-label" for="input-email">Email address</label>
-                        <input name="email" type="email" id="input-email" class="form-control form-control-alternative" placeholder="youremail@example.com" value="{{result.email}}">
+                      <label class="form-control-label" for="input-email">Email address</label>
+                      <div id="g-email" class="form-group">  
+                        <input id="i-email" name="email" type="email" id="input-email" class="form-control form-control-alternative" placeholder="youremail@example.com" value="{{result.email}}">
+                        <div class="text-muted font-italic"><small><span class="text-danger font-weight-700" id="checkemail"></span></small></div>
                       </div>
                     </div>
                   </div>
@@ -293,6 +294,8 @@
                     <textarea name="about" id="input-about-me" rows="4" class="form-control form-control-alternative" placeholder="A few words about you ...">{{result.about}}</textarea>
                   </div>
                 </div>
+                <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+                <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
                 <hr>
                 <button type="submit" class="btn btn-info btn-block">Update Profile</button>
               </form>
@@ -302,9 +305,48 @@
       </div>
 {% endblock %}
 {% block appjs %}
-  getScript('{{ site_url ~ path_for('/') }}assets/vendor/chart.js/dist/Chart.min.js',function(){
-    getScript('{{ site_url ~ path_for('/') }}assets/vendor/chart.js/dist/Chart.extension.js',function(){
-      getScript('{{ site_url ~ path_for('/') }}assets/js/argon.js?v={{ global.app.version }}')
-    });
-  });
+  getScript('{{ site_url ~ path_for('/') }}assets/js/argon.js?v={{ global.app.version }}');
+  $('#i-email').keyup($$app.throttle(function(){
+    $('#g-email').removeClass('has-danger has-success');
+    $('#i-email').removeClass('is-invalid is-valid');
+    $('#checkemail').removeClass('text-danger text-success');
+    $('#checkemail').html('');
+    if($$validate.isNotEmpty($('#i-email').val())){
+      if ($('#i-email').val().toLowerCase() != '{{ result.email }}'.toLowerCase()){
+        if(!$$validate.isEmail($('#i-email').val())){
+          $('#g-email').addClass('has-danger');
+          $('#i-email').addClass('is-valid');
+          $('#checkemail').addClass('text-danger');
+          $('#checkemail').html('Email address is invalid!');
+        } else {
+          $.ajax({
+            url: "{{ site_url ~ path_for('/') }}user/verify/email",
+            data: {email:$('#i-email').val()},
+            dataType: "json",
+            type: "post",
+            success: function(data) {
+              if (data.status == "success"){
+                $('#g-email').addClass('has-success');
+                $('#i-email').addClass('is-valid');
+                $('#checkemail').addClass('text-success');
+              } else {
+                $('#g-email').addClass('has-danger');
+                $('#i-email').addClass('is-invalid');
+                $('#checkemail').addClass('text-danger');
+              }
+              $('#checkemail').html(data.message);
+            },
+            error: function(x, e) {
+              if($$validate.isJson(x.responseText)){
+                var obj = JSON.parse(x.responseText);
+                console.log(obj.message);
+              } else {
+                console.log(x.responseText);
+              }
+            }
+          });
+        }
+      }
+    }
+  },1000));
 {% endblock %}
