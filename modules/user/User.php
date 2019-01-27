@@ -32,7 +32,7 @@ class User extends UserHelper {
                 return [
                     'status' => 'success',
                     'message' => 'Login successful!',
-                    'avatar' => $user->avatar
+                    'avatar' => $item->avatar
                 ];
             }
         }
@@ -297,26 +297,53 @@ class User extends UserHelper {
     /**
      * Change Password
      * 
-     * @return bool
+     * @return array
      */
     public function changePassword(){
-        $username = $this->username;
-        $password = $this->password;
-        $password2 = $this->password2;
-
-        if(!empty($username) && (!empty($password) || !empty($password2))){
+        if(!empty($this->username) && !empty($this->oldpassword) && !empty($this->password) && !empty($this->password2)){
             $user = new \Filebase\Database([
                 'dir' => $this->getDataSource()
             ]);
-    
-            if ($user->has($username)) {
-                $item = $user->get($username);
-                $item->hash = $this->hashPassword($username,$password2);
-                if($item->save()){
-                    return true;
+            if($this->password == $this->password2){
+                if ($user->has($this->username)) {
+                    $item = $user->get($this->username);
+                    if($this->verifyPassword($this->username,$this->oldpassword,$item->hash)) {
+                        $item->hash = $this->hashPassword($this->username,$this->password2);
+                        if($item->save()){
+                            $data = [
+                                'status' => 'success',
+                                'message' => 'Password has been changed!'
+                            ];
+                        } else {
+                            $data = [
+                                'status' => 'error',
+                                'message' => 'Change password failed!'
+                            ];
+                        }
+                    } else {
+                        $data = [
+                            'status' => 'error',
+                            'message' => 'Wrong password!'
+                        ];    
+                    }
+                } else {
+                    $data = [
+                        'status' => 'error',
+                        'message' => 'Username not found!'
+                    ];
                 }
+            } else {
+                $data = [
+                    'status' => 'error',
+                    'message' => 'Password not match!'
+                ];
             }
+        } else {
+            $data = [
+                'status' => 'error',
+                'message' => 'Parameter not valid!'
+            ];
         }
-        return false;
+        return $data;
     }
 }

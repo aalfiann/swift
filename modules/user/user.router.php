@@ -195,7 +195,9 @@ use \DavidePastore\Slim\Validation\Validation;
             $data['problem'] = $message[0]['problem'];
         }
         return $this->view->render($response, "profile.twig", $data);
-    })->setName("/my-profile")->add(new SessionCheck($container->get('router')));
+    })->setName("/my-profile")
+        ->add($container->get('csrf'))
+        ->add(new SessionCheck($container->get('router')));
 
     // POST Profile page
     $app->post('/my-profile', function (Request $request, Response $response) {
@@ -224,6 +226,7 @@ use \DavidePastore\Slim\Validation\Validation;
             $user->updated_by = $user->username;
             $data = $user->update();
             $data['problem'] = '';
+            $sh->set('avatar',$user->avatar);
         }
 
         // Create flash message to next redirected url
@@ -233,6 +236,39 @@ use \DavidePastore\Slim\Validation\Validation;
         return $response->withRedirect($url);
     })->setName("/my-profile")
         ->add(new Validation(validator::update()))
+        ->add($container->get('csrf'))
+        ->add(new SessionCheck($container->get('router')));
+
+    // GET Change Password page
+    $app->get('/change-password', function (Request $request, Response $response) {
+        return $this->view->render($response, "change-password.twig", []);
+    })->setName("/change-password")
+        ->add($container->get('csrf'))
+        ->add(new SessionCheck($container->get('router')));
+
+    // POST Change Password page
+    $app->post('/change-password', function (Request $request, Response $response) {
+        $datapost = $request->getParsedBody();
+        if($request->getAttribute('has_errors')){
+            $errors = $request->getAttribute('errors');
+            $data = [
+                'status' => 'error',
+                'message' => 'Parameter is not valid! ',
+                'problem' => json_encode($errors)
+            ];
+        } else {
+            $sh = new SessionHelper();
+            $user = new User();
+            $user->username = $sh->get('username');
+            $user->oldpassword = $datapost['oldpassword'];
+            $user->password = $datapost['password'];
+            $user->password2 = $datapost['password2'];
+            $data = $user->changePassword();
+        }
+        return $this->view->render($response, "change-password.twig", $data);
+    })->setName("/change-password")
+        ->add($container->get('csrf'))
+        ->add(new Validation(validator::changePassword()))
         ->add(new SessionCheck($container->get('router')));
 
     // Data user page

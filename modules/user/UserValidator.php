@@ -13,7 +13,8 @@ class UserValidator {
     public static function register(){
         return [
             'username' => v::alnum()->noWhitespace()->length(3, 20),
-            'email' => v::email()
+            'email' => v::email(),
+            'password' => v::length(3, 20)
         ];
     }
 
@@ -43,6 +44,13 @@ class UserValidator {
             'about' => v::length(0,150),
             'avatar' => v::optional(v::url()->length(0,250)),
             'background_image' => v::optional(v::url()->length(0,250))
+        ];
+    }
+
+    public static function changePassword(){
+        return [
+            'oldpassword' => v::length(3, 20),
+            'password' => v::length(3, 20)
         ];
     }
 }
