@@ -131,6 +131,57 @@ class UserManager extends UserHelper {
     }
 
     /**
+     * Update User As Admin means have full options, except Auth and Password
+     * 
+     * @return array
+     */
+    public function updateAsAdmin() {
+        $user = new \Filebase\Database([
+            'dir' => $this->getDataSource()
+        ]);
+
+        if ($user->has($this->username)) {
+            if(!$this->isEmailRegistered($this->username)) {
+                $item = $user->get($this->username);
+                $item->firstname = $this->firstname;
+                $item->lastname = $this->lastname;
+                $item->address = $this->address;
+                $item->city = $this->city;
+                $item->country = $this->country;
+                $item->postal = $this->postal;
+                $item->avatar = $this->avatar;
+                $item->background_image = $this->background_image;
+                $item->about = $this->about;
+                $item->updated_at = date('Y-m-d H:i:s');
+                $item->updated_by = $this->updated_by;
+                $item->status = $this->status;
+                if($item->save()){
+                    $data = [
+                        'status' => 'success',
+                        'message' => 'Update User successful!'
+                    ];
+                } else {
+                    $data = [
+                        'status' => 'error',
+                        'message' => 'Process failed to update, Please try again later!'
+                    ];
+                }
+            } else {
+                $data = [
+                    'status' => 'error',
+                    'message' => 'Email is already used by other user!'
+                ];
+            }
+        } else {
+            $data = [
+                'status' => 'error',
+                'message' => 'Can\'t update, User is not found!'
+            ];
+        }
+        return $data;
+    }
+
+    /**
      * Delete User
      * 
      * @return array
