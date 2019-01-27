@@ -241,7 +241,10 @@ use \DavidePastore\Slim\Validation\Validation;
 
     // GET Change Password page
     $app->get('/change-password', function (Request $request, Response $response) {
-        return $this->view->render($response, "change-password.twig", []);
+        $sh = new SessionHelper();
+        $data['username'] = $sh->get('username');
+        $data['avatar'] = $sh->get('avatar');
+        return $this->view->render($response, "change-password.twig", $data);
     })->setName("/change-password")
         ->add($container->get('csrf'))
         ->add(new SessionCheck($container->get('router')));
