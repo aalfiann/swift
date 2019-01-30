@@ -158,16 +158,10 @@
               {% for i in result %}
               <tr id="datatablerow{{ loop.index }}">
                 <td>
-                  <i class="fas fa-times text-danger"></i>
+                  <a href="javascript:void(0)" onclick="deleterow('#datatablerow{{ loop.index }}')"><i class="fas fa-times text-danger"></i></a>
                 </td>
-                <td>
-                  {{ i.pattern }}
-                </td>
-                <td>
-                  {% for m in i.method %}
-                    {{ m }}
-                  {% endfor %}
-                </td>
+                <td>{{ i.pattern|trim }}</td>
+                <td>{% for m in i.method %}{{ m }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -180,7 +174,7 @@
 
         <!-- Modal -->
         <div class="modal fade" id="addNewData" tabindex="-1" role="dialog" aria-labelledby="addNewDataLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
+          <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="addNewDataLabel">Modal title</h5>
@@ -189,7 +183,48 @@
                 </button>
               </div>
               <div class="modal-body">
-                ...
+                <div class="form-group">
+                  <label class="form-control-label" for="select-pattern">Pattern</label>
+                  <select name="pattern" id="select-pattern" class="form-control">
+                    {% for optpattern in option.result %}
+                      <option value="{{optpattern}}">{{optpattern}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="custom-control custom-checkbox mb-3">
+                  <input class="custom-control-input" id="checkall" type="checkbox">
+                  <label class="custom-control-label" for="checkall">Check All</label>
+                </div>
+                <div class="row col-12">
+                  <div class="custom-control custom-checkbox mb-3 mr-3">
+                    <input class="custom-control-input" id="checkget" name="options[]" type="checkbox" value="GET">
+                    <label class="custom-control-label" for="checkget">GET</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mb-3 mr-3">
+                    <input class="custom-control-input" id="checkpost" name="options[]" type="checkbox" value="POST">
+                    <label class="custom-control-label" for="checkpost">POST</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mb-3 mr-3">
+                    <input class="custom-control-input" id="checkput" name="options[]" type="checkbox" value="PUT">
+                    <label class="custom-control-label" for="checkput">PUT</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mb-3 mr-3">
+                    <input class="custom-control-input" id="checkdelete" name="options[]" type="checkbox" value="DELETE">
+                    <label class="custom-control-label" for="checkdelete">DELETE</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mb-3 mr-3">
+                    <input class="custom-control-input" id="checkhead" name="options[]" type="checkbox" value="HEAD">
+                    <label class="custom-control-label" for="checkhead">HEAD</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mb-3 mr-3">
+                    <input class="custom-control-input" id="checkpatch" name="options[]" type="checkbox" value="PATCH">
+                    <label class="custom-control-label" for="checkpatch">PATCH</label>
+                  </div>
+                  <div class="custom-control custom-checkbox mb-3 mr-3">
+                    <input class="custom-control-input" id="checkoptions" name="options[]" type="checkbox" value="OPTIONS">
+                    <label class="custom-control-label" for="checkoptions">OPTIONS</label>
+                  </div>
+                </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -206,16 +241,39 @@
 {% block preloadjs %}
   var no = {{ result|length }};
   function addnew(){
-    no++;
-    $("#datatable").find('tbody').append(
-      $('<tr id="datatablerow'+no+'">').append(
-        $('<td>').append('<a href="#"><i class="fas fa-times text-danger"></i></a>'),
-        $('<td>').append('lho-lho'),
-        $('<td>').append('GET POST PUT')
-      )
-    );
+    var pp = $("#select-pattern").find(":selected").text();
+    var dup = false;
+    $("#datatable tr td").each(function(){
+      var texttocheck = $(this).html();
+      if(texttocheck == pp){
+        dup = true;
+      }
+    });
+    if(dup==false){
+      var checked = [];
+      $("input[name='options[]']:checked").each(function () {
+        checked.push($(this).val());
+      });
+      no++;
+      $("#datatable").find('tbody').append(
+        $('<tr id="datatablerow'+no+'">').append(
+          $('<td>').append('<a href="javascript:void(0)" onclick="deleterow(\'#datatablerow'+no+'\')"><i class="fas fa-times text-danger"></i></a>'),
+          $('<td>').append(pp),
+          $('<td>').append(checked.join(", "))
+        )
+      );
+    }
+  }
+  function deleterow(id){
+    $(id).remove();
+  }
+  function save(){
+    
   }
 {% endblock %}
 {% block appjs %}
   getScript('{{ site_url ~ path_for('/') }}assets/js/argon.js?v={{ global.app.version }}');
+  $("#checkall").click(function(){
+    $('input:checkbox').not(this).prop('checked', this.checked);
+  });
 {% endblock %}
