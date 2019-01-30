@@ -19,6 +19,7 @@
   <script>
     {% block js %}
       function getScript(e,t){t=t||"";var a=document.createElement("script");a.src=e;var n=document.getElementsByTagName("head")[0],d=!1;a.onload=a.onreadystatechange=function(){d||this.readyState&&"loaded"!=this.readyState&&"complete"!=this.readyState||(d=!0,"function"==typeof t&&t(),a.onload=a.onreadystatechange=null,n.removeChild(a))},n.appendChild(a)}function getStyle(e,t){t=t||"";var n=window.document.createElement("link"),i=window.document.getElementsByTagName("head")[0];n.rel="stylesheet",n.href=e,n.media="only x",i.appendChild(n),setTimeout(function(){n.media="all"},0),"function"==typeof t&&t()}
+      {% block preloadjs %}{% endblock %}
       {% block loadjs %}
       (function(){
         getScript('{{ site_url ~ path_for("/") }}assets/js/app.min.js',function(){
