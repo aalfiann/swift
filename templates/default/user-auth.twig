@@ -169,7 +169,7 @@
         </div>
         <div class="card-footer py-4">
           <hr>
-          <button type="button" class="btn btn-info btn-block">Save Changes</button>
+          <button type="button" onclick="save()" class="btn btn-info btn-block">Save Changes</button>
         </div>
 
         <!-- Modal -->
@@ -268,7 +268,26 @@
     $(id).remove();
   }
   function save(){
-    
+    data = [];
+    var table = document.getElementById('datatable');
+    var rowLength = table.rows.length;
+    for(var i=1; i < rowLength; i+=1){
+      var row = table.rows[i];
+      datas = data[i-1];
+      datas = {};
+      var cellLength = row.cells.length;
+      for(var y=0; y < cellLength; y+=1){
+        var cell = row.cells[y];
+        //do something with every cell here
+        if(y==1){
+          datas['pattern'] = cell.innerHTML;
+        } else if (y==2){
+          datas['methods'] = cell.innerHTML;
+        }
+      }
+      data[i-1] = datas;
+    }
+    console.log(JSON.stringify(data));
   }
 {% endblock %}
 {% block appjs %}
