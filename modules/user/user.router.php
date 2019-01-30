@@ -10,6 +10,7 @@ use \modules\mailer\Mailer;
 
 use \modules\user\User;
 use \modules\user\UserManager;
+use \modules\user\UserAuthManager;
 use \modules\user\middleware\UserAuth;
 use \modules\user\UserValidator as validator;
 use \DavidePastore\Slim\Validation\Validation;
@@ -73,7 +74,7 @@ use \DavidePastore\Slim\Validation\Validation;
     $app->get('/dashboard', function (Request $request, Response $response) {
         $response = $this->cache->withEtag($response, EtagHelper::updateByMinute());
         return $this->view->render($response, "dashboard.twig", []);
-    })->setName("/dashboard")->add(new UserAuth)->add(new SessionCheck($container->get('router')));
+    })->setName("/dashboard")->add(new UserAuth)->add(new SessionCheck($container));
 
     // Logout
     $app->get('/logout', function (Request $request, Response $response) {
@@ -197,7 +198,7 @@ use \DavidePastore\Slim\Validation\Validation;
         return $this->view->render($response, "profile.twig", $data);
     })->setName("/my-profile")
         ->add($container->get('csrf'))
-        ->add(new SessionCheck($container->get('router')));
+        ->add(new SessionCheck($container));
 
     // POST Profile page
     $app->post('/my-profile', function (Request $request, Response $response) {
@@ -237,7 +238,7 @@ use \DavidePastore\Slim\Validation\Validation;
     })->setName("/my-profile")
         ->add(new Validation(validator::update()))
         ->add($container->get('csrf'))
-        ->add(new SessionCheck($container->get('router')));
+        ->add(new SessionCheck($container));
 
     // GET Edit Profile page
     $app->get('/edit-profile/{username}', function (Request $request, Response $response) {
@@ -264,7 +265,7 @@ use \DavidePastore\Slim\Validation\Validation;
         return $this->view->render($response, "profile-edit.twig", $data);
     })->setName("/edit-profile")
         ->add($container->get('csrf'))
-        ->add(new SessionCheck($container->get('router')));
+        ->add(new SessionCheck($container));
 
     // POST Edit Profile page
     $app->post('/edit-profile/{username}', function (Request $request, Response $response) {
@@ -304,7 +305,7 @@ use \DavidePastore\Slim\Validation\Validation;
     })->setName("/edit-profile")
         ->add(new Validation(validator::update()))
         ->add($container->get('csrf'))
-        ->add(new SessionCheck($container->get('router')));
+        ->add(new SessionCheck($container));
 
     // GET Change Password page
     $app->get('/change-password', function (Request $request, Response $response) {
@@ -314,7 +315,7 @@ use \DavidePastore\Slim\Validation\Validation;
         return $this->view->render($response, "change-password.twig", $data);
     })->setName("/change-password")
         ->add($container->get('csrf'))
-        ->add(new SessionCheck($container->get('router')));
+        ->add(new SessionCheck($container));
 
     // POST Change Password page
     $app->post('/change-password', function (Request $request, Response $response) {
@@ -339,7 +340,7 @@ use \DavidePastore\Slim\Validation\Validation;
     })->setName("/change-password")
         ->add($container->get('csrf'))
         ->add(new Validation(validator::changePassword()))
-        ->add(new SessionCheck($container->get('router')));
+        ->add(new SessionCheck($container));
 
     // Data user page
     $app->get('/data-user', function (Request $request, Response $response) {
@@ -348,7 +349,7 @@ use \DavidePastore\Slim\Validation\Validation;
         $data['username'] = $sh->get('username');
         $data['avatar'] = $sh->get('avatar');
         return $this->view->render($response, "data-user.twig", $data);
-    })->setName("/data-user")->add(new SessionCheck($container->get('router')));
+    })->setName("/data-user")->add(new SessionCheck($container));
 
     // API Get User Data by Username
     $app->get('/user/info/api/json/{username}', function (Request $request, Response $response) {
@@ -372,7 +373,7 @@ use \DavidePastore\Slim\Validation\Validation;
         ->withBody($body);
     })->setName("/user/info/api/json")
         ->add(new Validation(validator::userinfo()))
-        ->add(new SessionCheck($container->get('router')));
+        ->add(new SessionCheck($container));
 
     // API Data User for global use 
     $app->get('/user/data/api/json/{page}/{itemperpage}', function (Request $request, Response $response) {
@@ -399,7 +400,7 @@ use \DavidePastore\Slim\Validation\Validation;
         ->withBody($body);
     })->setName("/user/data/api/json")
         ->add(new Validation(validator::index()))
-        ->add(new SessionCheck($container->get('router')));
+        ->add(new SessionCheck($container));
 
     // API Data User for DataTables ServerSide use
     $app->post('/user/data/api/json/datatables', function (Request $request, Response $response) {
@@ -415,4 +416,76 @@ use \DavidePastore\Slim\Validation\Validation;
         return $response->withStatus(200)
         ->withHeader('Content-Type','application/json; charset=utf-8')
         ->withBody($body);
-    })->setName("/user/data/api/json/datatables")->add(new SessionCheck($container->get('router')));
+    })->setName("/user/data/api/json/datatables")->add(new SessionCheck($container));
+
+    // Data user page
+    $app->get('/user-auth/{username}', function (Request $request, Response $response) {
+        $response = $this->cache->withEtag($response, EtagHelper::updateByMinute());
+        $sh = new SessionHelper();
+        $uam = new UserAuthManager();
+        $uam->username = $request->getAttribute('username');
+        $data = $uam->readUserAuth(); 
+        $data['username'] = $sh->get('username');
+        $data['avatar'] = $sh->get('avatar');
+        return $this->view->render($response, "user-auth.twig", $data);
+    })->setName("/user-auth")->add(new SessionCheck($container));
+
+    // API Option data for available auth routes
+    $app->get('/user-auth/routes/api/json', function (Request $request, Response $response) use($container) {
+        $body = $response->getBody();
+        $user = new UserAuthManager();
+        $body->write(json_encode($user->optionAuthRoutes()));
+        
+        return $response->withStatus(200)
+        ->withHeader('Content-Type','application/json; charset=utf-8')
+        ->withBody($body);
+    })->setName("/user-auth/read/api/json")
+        ->add(new SessionCheck($container));
+
+    // API to append new auth routes
+    $app->map(['GET','POST'],'/user-auth/routes/append/api/json',function(Request $request,Response $response){
+        $body = $response->getBody();
+        $datapost = $request->getParsedBody();
+        $pattern = (!empty($datapost['pattern'])?$datapost['pattern']:'');
+        $uam = new UserAuthManager();
+        if($uam->appendAuthRoute($pattern)){
+            $data = [
+                'status' => 'success',
+                'message' => 'Process append data route is successful!'
+            ];
+        } else {
+            $data = [
+                'status' => 'error',
+                'message' => 'Process append data route is failed!'
+            ];
+        }
+        $body->write(json_encode($data));
+        return $response->withStatus(200)
+        ->withHeader('Content-Type','application/json; charset=utf-8')
+        ->withBody($body);
+    })->setName("/user-auth/routes/append/api/json")
+        ->add(new SessionCheck($container));
+
+    // API to delete auth routes
+    $app->map(['GET','POST'],'/user-auth/routes/delete/api/json',function(Request $request,Response $response){
+        $body = $response->getBody();
+        $datapost = $request->getParsedBody();
+        $pattern = (!empty($datapost['pattern'])?$datapost['pattern']:'');
+        $uam = new UserAuthManager();
+        if($uam->deleteAuthRoute($pattern)){
+            $data = [
+                'status' => 'success',
+                'message' => 'Process delete data route is successful!'
+            ];
+        } else {
+            $data = [
+                'status' => 'error',
+                'message' => 'Process delete data route is failed!'
+            ];
+        }
+        $body->write(json_encode($data));
+        return $response->withStatus(200)
+        ->withHeader('Content-Type','application/json; charset=utf-8')
+        ->withBody($body);
+    })->setName("/user-auth/routes/delete/api/json")
+        ->add(new SessionCheck($container));
