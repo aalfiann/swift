@@ -1,7 +1,7 @@
 <?php 
 namespace modules\session\middleware;
 use \modules\session\helper\SessionHelper;
-use \Slim\Router;
+use \Slim\Container;
     /**
      * A class for session check
      *
@@ -12,8 +12,8 @@ use \Slim\Router;
      */
     class SessionCheck {
 
-        public function __construct(Router $router){
-            $this->router = $router;
+        public function __construct(Container $container){
+            $this->router = $container->get('router');
         }
 
         /**
