@@ -1,0 +1,12 @@
+[
+    "/data-user",
+    "/edit-profile/{username}",
+    "/user/info/api/json/{username}",
+    "/user/data/api/json/{page}/{itemperpage}",
+    "/user/data/api/json/datatables",
+    "/user-auth/{username}",
+    "/user-auth/acl/api/json/update",
+    "/user-auth/routes/api/json",
+    "/user-auth/routes/append/api/json",
+    "/user-auth/routes/delete/api/json"
+]
