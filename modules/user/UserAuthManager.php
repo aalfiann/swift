@@ -71,6 +71,9 @@ class UserAuthManager extends UserHelper {
             $item = $user->get($this->username);
             $data = [
                 'result' => $item->auth,
+                'attribute' => [
+                    'username' => $this->username
+                ],
                 'status' => 'success',
                 'message' => 'Data found!'
             ];
