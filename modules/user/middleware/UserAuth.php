@@ -44,10 +44,10 @@ use \aalfiann\Filebase;
                 foreach($rules as $rule){
                     if(in_array($routes->getPattern(),$rule)){
                         $pattern = true;
-                        if (in_array($request->getMethod(),$rule['method'])){
+                        if (in_array($request->getMethod(),$rule['methods'])){
                             $method = true;
                         } else {
-                            $datamethod = $rule['method'];
+                            $datamethod = $rule['methods'];
                         }
                     }
                 }
