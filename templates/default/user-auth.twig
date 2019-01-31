@@ -145,6 +145,7 @@
             </div>
           </div>
         </div>
+        <div id="message" class="col-12"></div>
         <div class="table-responsive">
           <table id="datatable" class="table align-items-center table-flush">
             <thead class="thead-light">
@@ -161,7 +162,7 @@
                   <a href="javascript:void(0)" onclick="deleterow('#datatablerow{{ loop.index }}')"><i class="fas fa-times text-danger"></i></a>
                 </td>
                 <td>{{ i.pattern|trim }}</td>
-                <td>{% for m in i.method %}{{ m }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                <td>{% for m in i.methods %}{{ m }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -282,12 +283,47 @@
         if(y==1){
           datas['pattern'] = cell.innerHTML;
         } else if (y==2){
-          datas['methods'] = cell.innerHTML;
+          datas['methods'] = cell.innerHTML.split(', ');
         }
       }
       data[i-1] = datas;
     }
-    console.log(JSON.stringify(data));
+    $.ajax({
+      url: "{{ site_url ~ path_for('/') }}user-auth/acl/api/json/update",
+      data: {
+        username: "{{ attribute.username }}",
+        auth: data
+      },
+      dataType: "json",
+      type: "post",
+      success: function(data) {
+        if (data.status == "success"){
+          $('#message').html('<div class="alert alert-success alert-dismissible fade show" role="alert">\
+                <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>\
+                <span class="alert-inner--text"><strong>Success!</strong> '+data.message+'</span>\
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                  <span aria-hidden="true">&times;</span>\
+                </button>\
+              </div>');
+        } else {
+          $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">\
+                <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>\
+                <span class="alert-inner--text"><strong>Failed!</strong> '+data.message+'</span>\
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                  <span aria-hidden="true">&times;</span>\
+                </button>\
+              </div>');
+        }
+      },
+      error: function(x, e) {
+        if($$validate.isJson(x.responseText)){
+          var obj = JSON.parse(x.responseText);
+          console.log(obj.message);
+        } else {
+          console.log(x.responseText);
+        }
+      }
+    });    
   }
 {% endblock %}
 {% block appjs %}
