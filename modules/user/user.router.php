@@ -247,6 +247,7 @@ use \DavidePastore\Slim\Validation\Validation;
         $user->username = $request->getAttribute('username'); 
         $data = $user->read();
         $data['option_status'] = $user->optionStatus();
+        $data['option_role'] = $user->optionRole();
         $data['username'] = $sh->get('username');
         $data['avatar'] = $sh->get('avatar');
         // Remove the data status from reading data
@@ -292,6 +293,7 @@ use \DavidePastore\Slim\Validation\Validation;
             $user->background_image = $datapost['background_image'];
             $user->about = $datapost['about'];
             $user->status = $datapost['status'];
+            $user->role = $datapost['role'];
             $sh = new SessionHelper();
             $user->updated_by = $sh->get('username');
             $data = $user->updateAsAdmin();

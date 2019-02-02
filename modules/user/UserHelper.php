@@ -106,4 +106,21 @@ class UserHelper {
         return false;
     }
 
+    /**
+     * Determine is first register user action
+     * 
+     * @return bool
+     */
+    public function isFirstRegisterUser(){
+        $user = new \Filebase\Database([
+            'dir' => 'storage/user'
+        ]);
+
+        $list = $user->query()->limit(1)->results();
+        if(!empty($list)){
+            return false;
+        }
+        return true;
+    }
+
 }

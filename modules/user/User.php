@@ -72,16 +72,22 @@ class User extends UserHelper {
                 $item->email = $email;
                 $item->hash = $this->hashPassword($username,$password);
                 $item->status = 'active';
-                $item->auth = [
-                        [
-                            'pattern' => '/dashboard',
-                            'method' => ['GET','POST']
-                        ],
-                        [
-                            'pattern' => '/my-profile',
-                            'method' => ['GET','POST']
-                        ]
-                    ];
+                if($this->isFirstRegisterUser()){
+                    $routes = json_decode(\Filebase\Filesystem::read('route.auth'),true);
+                    $auth = [];
+                    foreach($routes as $route){
+                        $auth[] = [
+                            'pattern' => $route,
+                            'methods' => ['GET','POST']
+                        ];
+                    }
+                    if(!empty($auth)) {
+                        $item->auth = $auth;
+                    }
+                    $item->role = 'admin';
+                } else {
+                    $item->role = 'user';
+                }
                 if($item->save()){
                     $data = [
                         'status' => 'success',

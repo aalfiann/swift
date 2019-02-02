@@ -44,16 +44,6 @@ class UserManager extends UserHelper {
                 $item->email = $this->email;
                 $item->hash = $this->hashPassword($this->username,$this->password);
                 $item->status = 'active';
-                $item->auth = [
-                        [
-                            'pattern' => '/dashboard',
-                            'method' => ['GET','POST']
-                        ],
-                        [
-                            'pattern' => '/my-profile',
-                            'method' => ['GET','POST']
-                        ]
-                    ];
                 if($item->save()){
                     $data = [
                         'status' => 'success',
@@ -154,6 +144,7 @@ class UserManager extends UserHelper {
                 $item->about = $this->about;
                 $item->updated_at = date('Y-m-d H:i:s');
                 $item->updated_by = $this->updated_by;
+                $item->role = $this->role;
                 $item->status = $this->status;
                 if($item->save()){
                     $data = [
@@ -237,7 +228,7 @@ class UserManager extends UserHelper {
         ]);
 
         // List before pagination
-        $list1 = $user->query()->select('username,email,status,created_at,updated_at')
+        $list1 = $user->query()->select('username,email,role,status,created_at,updated_at')
             ->where('username','LIKE',$search)
             ->orWhere('email','LIKE',$search)
             ->orWhere('status','LIKE',$search);
@@ -294,7 +285,7 @@ class UserManager extends UserHelper {
             'dir' => $this->getDataSource()
         ]);
 
-        $columns = ['username','email','status','created_at','updated_at','updated_by'];
+        $columns = ['username','email','role','status','created_at','updated_at','updated_by'];
 
         // List before pagination
         $list1 = $user->query()->select($columns)
