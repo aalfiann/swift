@@ -443,7 +443,7 @@
 {% block appjs %}
   getScript('{{ site_url ~ path_for('/') }}assets/vendor/chart.js/dist/Chart.min.js',function(){
     getScript('{{ site_url ~ path_for('/') }}assets/vendor/chart.js/dist/Chart.extension.js',function(){
-      getScript('{{ site_url ~ path_for('/') }}assets/js/argon.js?v={{ global.app.version }}')
+      getScript('{{ site_url ~ path_for('/') }}assets/js/argon.min.js?v={{ global.app.version }}')
     });
   });
 {% endblock %}

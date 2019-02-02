@@ -2,7 +2,7 @@
 {% block head %}
   <meta name="description" content="Start your development with a Dashboard for Bootstrap 4.">
   <meta name="author" content="Creative Tim">
-  <title>Edit Profile - Free Dashboard for Bootstrap 4</title>
+  <title>Edit Profile - {{global.app.name}}</title>
 {% endblock %}
 {% block usermenuleft %}
   <!-- User -->
@@ -317,7 +317,7 @@
       </div>
 {% endblock %}
 {% block appjs %}
-  getScript('{{ site_url ~ path_for('/') }}assets/js/argon.js?v={{ global.app.version }}');
+  getScript('{{ site_url ~ path_for('/') }}assets/js/argon.min.js?v={{ global.app.version }}');
   $('#i-email').keyup($$app.throttle(function(){
     $('#g-email').removeClass('has-danger has-success');
     $('#i-email').removeClass('is-invalid is-valid');

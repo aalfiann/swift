@@ -174,7 +174,7 @@
 {% block appjs %}
   getScript('{{ site_url ~ path_for('/') }}assets/vendor/chart.js/dist/Chart.min.js',function(){
     getScript('{{ site_url ~ path_for('/') }}assets/vendor/chart.js/dist/Chart.extension.js',function(){
-      getScript('{{ site_url ~ path_for('/') }}assets/js/argon.js?v={{ global.app.version }}',function(){
+      getScript('{{ site_url ~ path_for('/') }}assets/js/argon.min.js?v={{ global.app.version }}',function(){
         getScript('{{ site_url ~ path_for('/') }}assets/vendor/datatables/datatables.min.js',function(){
           var selectCol = [ 0, 1, 2, 3, 4, 5 , 6, 7 ];
           var table = $('#example').DataTable({

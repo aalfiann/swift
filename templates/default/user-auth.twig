@@ -2,7 +2,7 @@
 {% block head %}
   <meta name="description" content="Start your development with a Dashboard for Bootstrap 4.">
   <meta name="author" content="Creative Tim">
-  <title>User Authorization - Free Dashboard for Bootstrap 4</title>
+  <title>User Authorization - {{global.app.name}}</title>
 {% endblock %}
 {% block usermenuleft %}
   <!-- User -->
@@ -327,7 +327,7 @@
   }
 {% endblock %}
 {% block appjs %}
-  getScript('{{ site_url ~ path_for('/') }}assets/js/argon.js?v={{ global.app.version }}');
+  getScript('{{ site_url ~ path_for('/') }}assets/js/argon.min.js?v={{ global.app.version }}');
   $("#checkall").click(function(){
     $('input:checkbox').not(this).prop('checked', this.checked);
   });
