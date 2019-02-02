@@ -4,6 +4,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 use \modules\session\middleware\SessionCheck;
 use \modules\session\helper\SessionHelper;
+use \modules\session\twig\SessionTwigExtension;
 
 use \modules\core\helper\EtagHelper;
 use \modules\mailer\Mailer;
@@ -216,10 +217,8 @@ use \DavidePastore\Slim\Validation\Validation;
 
     // GET Change Password page
     $app->get('/change-password', function (Request $request, Response $response) {
-        $sh = new SessionHelper();
-        $data['username'] = $sh->get('username');
-        $data['avatar'] = $sh->get('avatar');
-        return $this->view->render($response, "change-password.twig", $data);
+        $this->view->addExtension(new SessionTwigExtension);
+        return $this->view->render($response, "change-password.twig", []);
     })->setName("/change-password")
         ->add($container->get('csrf'))
         ->add(new SessionCheck($container));

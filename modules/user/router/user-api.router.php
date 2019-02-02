@@ -3,8 +3,6 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
 use \modules\session\middleware\SessionCheck;
-use \modules\session\helper\SessionHelper;
-
 use \modules\core\helper\EtagHelper;
 
 use \modules\user\User;
@@ -169,5 +167,20 @@ use \DavidePastore\Slim\Validation\Validation;
         ->withHeader('Content-Type','application/json; charset=utf-8')
         ->withBody($body);
     })->setName("/user-auth/routes/delete/api/json")
+        ->add(new UserAuth)
+        ->add(new SessionCheck($container));
+
+    // API Update User Auth Route
+    $app->map(['GET','POST'],'/user-auth/acl/api/json/update', function (Request $request, Response $response) {
+        $body = $response->getBody();
+        $datapost = $request->getParsedBody();
+        $uam = new UserAuthManager();
+        $uam->username = $datapost['username'];
+        $uam->auth = $datapost['auth'];
+        $body->write(json_encode($uam->updateUserAuth()));
+        return $response->withStatus(200)
+            ->withHeader('Content-Type','application/json; charset=utf-8')
+            ->withBody($body);
+    })->setName("/user-auth/acl/api/json/update")
         ->add(new UserAuth)
         ->add(new SessionCheck($container));

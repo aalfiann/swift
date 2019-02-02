@@ -4,6 +4,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 use \modules\session\middleware\SessionCheck;
 use \modules\session\helper\SessionHelper;
+use \modules\session\twig\SessionTwigExtension;
 
 use \modules\core\helper\EtagHelper;
 
@@ -16,14 +17,11 @@ use \DavidePastore\Slim\Validation\Validation;
 
     // GET Edit Profile page
     $app->get('/edit-profile/{username}', function (Request $request, Response $response) {
-        $sh = new SessionHelper();
         $user = new UserManager();
         $user->username = $request->getAttribute('username'); 
         $data = $user->read();
         $data['option_status'] = $user->optionStatus();
         $data['option_role'] = $user->optionRole();
-        $data['username'] = $sh->get('username');
-        $data['avatar'] = $sh->get('avatar');
         // Remove the data status from reading data
         if($data['status'] == 'success') {
             unset($data['status']);
@@ -37,6 +35,7 @@ use \DavidePastore\Slim\Validation\Validation;
             $data['message'] = $message[0]['message'];
             $data['problem'] = $message[0]['problem'];
         }
+        $this->view->addExtension(new SessionTwigExtension);
         return $this->view->render($response, "profile-edit.twig", $data);
     })->setName("/edit-profile")
         ->add($container->get('csrf'))
@@ -88,39 +87,20 @@ use \DavidePastore\Slim\Validation\Validation;
     // Data user page
     $app->get('/data-user', function (Request $request, Response $response) {
         $response = $this->cache->withEtag($response, EtagHelper::updateByMinute());
-        $sh = new SessionHelper();
-        $data['username'] = $sh->get('username');
-        $data['avatar'] = $sh->get('avatar');
-        return $this->view->render($response, "data-user.twig", $data);
+        $this->view->addExtension(new SessionTwigExtension);
+        return $this->view->render($response, "data-user.twig", []);
     })->setName("/data-user")
         ->add(new UserAuth)
         ->add(new SessionCheck($container));
 
-    // Data user page
+    // User Auth page
     $app->get('/user-auth/{username}', function (Request $request, Response $response) {
-        $sh = new SessionHelper();
         $uam = new UserAuthManager();
         $uam->username = $request->getAttribute('username');
         $data = $uam->readUserAuth();
         $data['option'] = $uam->optionAuthRoutes();
-        $data['username'] = $sh->get('username');
-        $data['avatar'] = $sh->get('avatar');
+        $this->view->addExtension(new SessionTwigExtension);
         return $this->view->render($response, "user-auth.twig", $data);
     })->setName("/user-auth")
-        ->add(new UserAuth)
-        ->add(new SessionCheck($container));
-
-    // Update User Auth Route
-    $app->map(['GET','POST'],'/user-auth/acl/api/json/update', function (Request $request, Response $response) {
-        $body = $response->getBody();
-        $datapost = $request->getParsedBody();
-        $uam = new UserAuthManager();
-        $uam->username = $datapost['username'];
-        $uam->auth = $datapost['auth'];
-        $body->write(json_encode($uam->updateUserAuth()));
-        return $response->withStatus(200)
-            ->withHeader('Content-Type','application/json; charset=utf-8')
-            ->withBody($body);
-    })->setName("/user-auth/acl/api/json/update")
         ->add(new UserAuth)
         ->add(new SessionCheck($container));
