@@ -3,6 +3,7 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule . index.php [L]
+	RewriteRule ^(cache|storage)/.*\.(cache|json|yaml|xml|md|php|rb|py)$ - [F,L,NC]
 	SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 </IfModule>
 
