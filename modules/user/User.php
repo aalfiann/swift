@@ -14,6 +14,16 @@ use \aalfiann\Filebase;
 class User extends UserHelper {
 
     /**
+     * @var cache if set to true then will query will use data from cache 
+     */
+    protected $cache=true;
+
+    /**
+     * @var cache_expires is time for cache will expired
+     */
+    protected $cache_expires=60;
+
+    /**
      * Login user
      * 
      * @return array
@@ -226,7 +236,9 @@ class User extends UserHelper {
 
         //get username
         $user = new \Filebase\Database([
-            'dir' => $this->getDataSource()
+            'dir' => $this->getDataSource(),
+            'cache' => $this->cache,
+            'cache_expires' => $this->cache_expires
         ]);
 
         $list = $user->query()->where('email','=',$email)->limit(1)->results();

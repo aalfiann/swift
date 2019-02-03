@@ -12,8 +12,24 @@ use \aalfiann\Filebase;
 
 class UserManager extends UserHelper {
 
+    /**
+     * @var limitData is to prevent the data load
+     */
     protected $limitData=1000;
 
+    /**
+     * @var cache if set to true then will query will use data from cache 
+     */
+    protected $cache=true;
+
+    /**
+     * @var cache_expires is time for cache will expired
+     */
+    protected $cache_expires=60;
+
+    /**
+     * Determine is limit already allowed
+     */
     private function isLimitAllowed($number){
         return (($this->limitData>=$number)?true:false);
     }
@@ -44,6 +60,7 @@ class UserManager extends UserHelper {
                 $item->email = $this->email;
                 $item->hash = $this->hashPassword($this->username,$this->password);
                 $item->status = 'active';
+                $item->role = 'user';
                 if($item->save()){
                     $data = [
                         'status' => 'success',
@@ -224,30 +241,37 @@ class UserManager extends UserHelper {
         }
 
         $user = new \Filebase\Database([
-            'dir' => $this->getDataSource()
+            'dir' => $this->getDataSource(),
+            'cache' => $this->cache,
+            'cache_expires' => $this->cache_expires
         ]);
 
-        // List before pagination
-        $list1 = $user->query()->select('username,email,role,status,created_at,updated_at')
-            ->where('username','LIKE',$search)
-            ->orWhere('email','LIKE',$search)
-            ->orWhere('status','LIKE',$search);
+        $columns = ['username','email','role','status','created_at','updated_at','avatar'];
 
         // total records
-        $total_records = $list1->count();
+        $total_records = $user->query()->select($columns)
+            ->where('username','LIKE',$search)
+            ->orWhere('email','LIKE',$search)
+            ->orWhere('status','LIKE',$search)
+            ->count();
+
         // total pages
         $total_pages = ceil($total_records/$itemperpage);
         
-        // List after pagination
-        $list2 = $list1->limit($itemperpage,$offset)
+        // List for pagination
+        $list = $user->query()->select($columns)
+            ->where('username','LIKE',$search)
+            ->orWhere('email','LIKE',$search)
+            ->orWhere('status','LIKE',$search)
+            ->limit($itemperpage,$offset)
             ->orderBy('created_at','DESC');
 
         // total items
-        $total_items = $list2->count();
+        $total_items = $list->count();
 
-        if(!empty($list2->results())){
+        if(!empty($list->results())){
             return [
-                'result' => $list2->results(),
+                'result' => $list->results(),
                 'status' => 'success',
                 'message' => 'Data found!',
                 'metadata' => [
@@ -282,36 +306,40 @@ class UserManager extends UserHelper {
         $sort = $this->sort;
 
         $user = new \Filebase\Database([
-            'dir' => $this->getDataSource()
+            'dir' => $this->getDataSource(),
+            'cache' => $this->cache,
+            'cache_expires' => $this->cache_expires
         ]);
 
-        $columns = ['username','email','role','status','created_at','updated_at','updated_by'];
-
-        // List before pagination
-        $list1 = $user->query()->select($columns)
-            ->where('username','LIKE',$search)
-            ->orWhere('email','LIKE',$search)
-            ->orWhere('status','LIKE',$search);
+        $columns = ['username','email','role','status','created_at','updated_at','updated_by','avatar'];
 
         // total records
-        $total_records = $list1->count();
+        $total_records = $user->query()->select($columns)
+            ->where('username','LIKE',$search)
+            ->orWhere('email','LIKE',$search)
+            ->orWhere('status','LIKE',$search)
+            ->count();
 
         // total pages
         $total_pages = ceil($total_records/$length);
 
-        // List after pagination
-        $list2 = $list1->limit($length,$offset)
+        // List for pagination
+        $list = $user->query()->select($columns)
+            ->where('username','LIKE',$search)
+            ->orWhere('email','LIKE',$search)
+            ->orWhere('status','LIKE',$search)
+            ->limit($length,$offset)
             ->orderBy($columns[$column],strtoupper($sort));
 
         // total items
-        $total_items = $list2->count();
+        $total_items = $list->count();
 
-        if(!empty($list2->results())){
+        if(!empty($list->results())){
             return [
                 'draw' => (int)$this->draw,
                 'recordsTotal' => $total_records,
                 'recordsFiltered' => $total_records,
-                'data' => $list2->results(),
+                'data' => $list->results(),
                 'status' => 'success',
                 'message' => 'Data found!',
                 'metadata' => [
