@@ -12,6 +12,24 @@ use \modules\user\middleware\UserAuth;
 use \modules\user\UserValidator as validator;
 use \DavidePastore\Slim\Validation\Validation;
 
+    // API Add New User
+    $app->post('/user/data/new', function (Request $request, Response $response) {
+        $body = $response->getBody();
+        $datapost = $request->getParsedBody();
+        $user = new UserManager();
+        $user->username = $datapost['username'];
+        $user->email = $datapost['email'];
+        $user->password = $datapost['password'];
+        $user->password2 = $datapost['password2'];
+        $body->write(json_encode($user->add()));
+        return $response->withStatus(200)
+        ->withHeader('Content-Type','application/json; charset=utf-8')
+        ->withBody($body);
+    })->setName("/user/data/new'")
+        ->add(new Validation(validator::register()))
+        ->add(new UserAuth)
+        ->add(new SessionCheck($container));
+
     // API Verify User
     $app->post('/user/verify', function (Request $request, Response $response) {
         $body = $response->getBody();

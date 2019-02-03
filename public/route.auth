@@ -4,6 +4,7 @@
     "/user/info/api/json/{username}",
     "/user/data/api/json/{page}/{itemperpage}",
     "/user/data/api/json/datatables",
+    "/user/data/new",
     "/user-auth/{username}",
     "/user-auth/acl/api/json/update",
     "/user-auth/routes/api/json",

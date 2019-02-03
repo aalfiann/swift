@@ -141,13 +141,14 @@
               <h3 class="mb-0">Data User</h3>
             </div>
             <div class="col text-right">
-              <a href="#!" class="btn btn-sm btn-primary">See all</a>
+              <a href="#!" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addNewData">Add New User</a>
             </div>
           </div>
         </div>
         <div class="card-body">
+          <div id="message" class="col-12"></div>
           <div class="table-responsive">
-            <table id="example" class="table align-items-center table-flush" width="100%">
+            <table id="datatable" class="table align-items-center table-flush" width="100%">
               <thead class="thead-light">
                 <tr>
                   <th scope="col" class="not-export-col">Avatar</th>
@@ -167,9 +168,111 @@
           </div>
         </div>
 
+        <!-- Modal -->
+        <div class="modal fade" id="addNewData" tabindex="-1" role="dialog" aria-labelledby="addNewDataLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title" id="addNewDataLabel">Add New User</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+
+                <form role="form" method="post">
+                <div id="g-username" class="form-group">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                    </div>
+                    <input id="username" name="username" class="form-control" placeholder="Name" type="text" required>
+                  </div>
+                  <div class="text-muted font-italic"><small><span class="text-danger font-weight-700" id="checkusername"></span></small></div>
+                </div>
+                <div id="g-email" class="form-group">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                    </div>
+                    <input id="i-email" name="email" class="form-control" placeholder="Email" type="email" required>
+                  </div>
+                  <div class="text-muted font-italic"><small><span class="text-danger font-weight-700" id="checkemail"></span></small></div>
+                </div>
+                <div class="form-group">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                    </div>
+                    <input id="password" name="password" class="form-control" placeholder="Password" type="password" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                    </div>
+                    <input id="password2" name="password2" class="form-control" placeholder="Confirm Password" type="password" required>
+                  </div>
+                  <div class="text-muted font-italic"><small><span class="text-danger font-weight-700" id="checkpassword"></span></small></div>
+                </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="btnsubmit" type="button" onclick="addnew()" class="btn btn-primary">Create New User</button>
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
+{% endblock %}
+{% block preloadjs %}
+  function addnew(){
+    $.ajax({
+      url: "{{ site_url ~ path_for('/') }}user/data/new",
+      data: {
+        username: $('#username').val(),
+        email: $('#i-email').val(),
+        password: $('#password').val(),
+        password2: $('#password2').val(),
+      },
+      dataType: "json",
+      type: "post",
+      success: function(data) {
+        if (data.status == "success"){
+          $('#message').html('<div class="alert alert-success alert-dismissible fade show" role="alert">\
+              <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>\
+              <span class="alert-inner--text"><strong>Success!</strong> '+data.message+'</span>\
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                <span aria-hidden="true">&times;</span>\
+              </button>\
+            </div>');
+          $('#datatable').DataTable().ajax.reload();
+        } else {
+          $('#message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">\
+              <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>\
+              <span class="alert-inner--text"><strong>Failed!</strong> '+data.message+'</span>\
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
+                <span aria-hidden="true">&times;</span>\
+              </button>\
+            </div>');
+        }
+      },
+      error: function(x, e) {
+        if($$validate.isJson(x.responseText)){
+          var obj = JSON.parse(x.responseText);
+          console.log(obj.message);
+        } else {
+          console.log(x.responseText);
+        }
+      }
+    }); 
+  }
 {% endblock %}
 {% block appjs %}
   getScript('{{ site_url ~ path_for('/') }}assets/vendor/chart.js/dist/Chart.min.js',function(){
@@ -177,7 +280,7 @@
       getScript('{{ site_url ~ path_for('/') }}assets/js/argon.min.js?v={{ global.app.version }}',function(){
         getScript('{{ site_url ~ path_for('/') }}assets/vendor/datatables/datatables.min.js',function(){
           var selectCol = [ 0, 1, 2, 3, 4, 5 , 6, 7 ];
-          var table = $('#example').DataTable({
+          var table = $('#datatable').DataTable({
             dom: "Brftlpi",
             responsive: true,
             processing: true,
@@ -203,7 +306,7 @@
             columns: [
               { 
                 render: function(data,type,row,meta) { 
-                  var pic = ($$validate.isNotEmpty(row.avatar)?row.avatar:"{{ site_url ~ path_for('/') }}assets/img/theme/face-0.jpg");
+                  var pic = (($$validate.isNotEmpty(row.avatar) && row.avatar != false)?row.avatar:"{{ site_url ~ path_for('/') }}assets/img/theme/face-0.jpg");
                   var a = '<div class="media align-items-center">\
                         <a href="#" class="avatar rounded-circle mr-3">\
                           <img alt="Image placeholder" src="'+pic+'">\
@@ -308,6 +411,117 @@
           $("div.dataTables_filter input").keyup($$app.throttle( function (e) {
             table.search( this.value ).draw();
           },2000));
+
+          
+
+          $('#username').keyup($$app.throttle(function(){
+            $('#g-username').removeClass('has-danger has-success');
+            $('#username').removeClass('is-invalid is-valid');
+            $('#checkusername').removeClass('text-danger text-success');
+            $('#checkusername').html('');
+            if($$validate.isNotEmpty($('#username').val())) {
+              if($$validate.isUsername($('#username').val())) {
+                $.ajax({
+                  url: "{{ site_url ~ path_for('/') }}user/verify",
+                  data: {username:$('#username').val()},
+                  dataType: "json",
+                  type: "post",
+                  success: function(data) {
+                    if (data.status == "success"){
+                      $('#g-username').addClass('has-success');
+                      $('#username').addClass('is-valid');
+                      $('#checkusername').addClass('text-success');
+                    } else {
+                      $('#g-username').addClass('has-danger');
+                      $('#username').addClass('is-invalid');
+                      $('#checkusername').addClass('text-danger');
+                    }
+                    $('#checkusername').html(data.message);
+                  },
+                  error: function(x, e) {
+                    if($$validate.isJson(x.responseText)){
+                      var obj = JSON.parse(x.responseText);
+                      console.log(obj.message);
+                    } else {
+                      console.log(x.responseText);
+                    }
+                  }
+                });
+              } else {
+                $('#g-username').addClass('has-danger');
+                $('#username').addClass('is-invalid');
+                $('#checkusername').addClass('text-danger');
+                $('#checkusername').html('Format username is alphanumeric 3-20.');
+              }
+            }
+          },1000));
+          $('#i-email').keyup($$app.throttle(function(){
+            $('#g-email').removeClass('has-danger has-success');
+            $('#i-email').removeClass('is-invalid is-valid');
+            $('#checkemail').removeClass('text-danger text-success');
+            $('#checkemail').html('');
+            if($$validate.isNotEmpty($('#i-email').val())){
+              if(!$$validate.isEmail($('#i-email').val())){
+                $('#g-email').addClass('has-danger');
+                $('#i-email').addClass('is-valid');
+                $('#checkemail').addClass('text-danger');
+                $('#checkemail').html('Email address is invalid!');
+              } else {
+                $.ajax({
+                  url: "{{ site_url ~ path_for('/') }}user/verify/email",
+                  data: {email:$('#i-email').val()},
+                  dataType: "json",
+                  type: "post",
+                  success: function(data) {
+                    if (data.status == "success"){
+                      $('#g-email').addClass('has-success');
+                      $('#i-email').addClass('is-valid');
+                      $('#checkemail').addClass('text-success');
+                    } else {
+                      $('#g-email').addClass('has-danger');
+                      $('#i-email').addClass('is-invalid');
+                      $('#checkemail').addClass('text-danger');
+                    }
+                    $('#checkemail').html(data.message);
+                  },
+                  error: function(x, e) {
+                    if($$validate.isJson(x.responseText)){
+                      var obj = JSON.parse(x.responseText);
+                      console.log(obj.message);
+                    } else {
+                      console.log(x.responseText);
+                    }
+                  }
+                });
+              }
+            }
+          },1000));
+          $('#password').keyup($$app.throttle(function(){
+            $('#checkpassword').removeClass('text-danger text-success');
+            $('#checkpassword').html('');
+            if($$validate.isNotEmpty($('#password').val()) && $$validate.isNotEmpty($('#password2').val())) {
+              if($('#password').val() != $('#password2').val()){
+                $('#checkpassword').addClass('text-danger');
+                $('#checkpassword').html('Password is not match!');
+              } else {
+                $('#checkpassword').addClass('text-success');
+                $('#checkpassword').html('Password is match!');
+              }
+            }
+          },1000));
+          $('#password2').keyup($$app.throttle(function(){
+            $('#checkpassword').removeClass('text-danger text-success');
+            $('#checkpassword').html('');
+            if($$validate.isNotEmpty($('#password').val()) && $$validate.isNotEmpty($('#password2').val())) {
+              if($('#password').val() != $('#password2').val()){
+                $('#checkpassword').addClass('text-danger');
+                $('#checkpassword').html('Password is not match!');
+              } else {
+                $('#checkpassword').addClass('text-success');
+                $('#checkpassword').html('Password is match!');
+              }
+            }
+          },1000));
 
         });
       });
