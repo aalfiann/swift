@@ -1,4 +1,6 @@
 <?php
+ 
+define('SWIFT_VERSION','1.0.0');
 
 // Create container
 $container = $app->getContainer();
