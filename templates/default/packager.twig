@@ -1,0 +1,533 @@
+{% extends "layout-base.twig" %}
+{% block head %}
+  <meta name="description" content="Start your development with a Dashboard for Bootstrap 4.">
+  <meta name="author" content="Creative Tim">
+  <title>Packager - {{global.app.name}}</title>
+{% endblock %}
+{% block usermenuleft %}
+  <!-- User -->
+      <ul class="nav align-items-center d-md-none">
+        <li class="nav-item dropdown">
+          <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="media align-items-center">
+              <span class="avatar avatar-sm rounded-circle">
+                <img alt="Image placeholder" src="{{ ((session_get('avatar'))? session_get('avatar'): site_url ~ path_for('/') ~ 'assets/img/theme/face-0.jpg') }}">
+              </span>
+            </div>
+          </a>
+          <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
+            <a href="{{ site_url ~ path_for('/my-profile') }}" class="dropdown-item">
+              <i class="ni ni-single-02"></i>
+              <span>My profile</span>
+            </a>
+            <a href="{{ site_url ~ path_for('/change-password') }}" class="dropdown-item">
+              <i class="fas fa-key"></i>
+              <span>Change Password</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="{{ site_url ~ path_for('/logout') }}" class="dropdown-item">
+              <i class="ni ni-user-run"></i>
+              <span>Logout</span>
+            </a>
+          </div>
+        </li>
+      </ul>
+{% endblock %}
+{% block usermenuright %}
+  <!-- User -->
+        <ul class="navbar-nav align-items-center d-none d-md-flex">
+          <li class="nav-item dropdown">
+            <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <div class="media align-items-center">
+                <span class="avatar avatar-sm rounded-circle">
+                  <img alt="Image placeholder" src="{{ ((session_get('avatar'))? session_get('avatar'): site_url ~ path_for('/') ~ 'assets/img/theme/face-0.jpg') }}">
+                </span>
+                <div class="media-body ml-2 d-none d-lg-block">
+                  <span class="mb-0 text-sm  font-weight-bold">{{session_get('username')}}</span>
+                </div>
+              </div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
+              <a href="{{ site_url ~ path_for('/my-profile') }}" class="dropdown-item">
+                <i class="ni ni-single-02"></i>
+                <span>My profile</span>
+              </a>
+              <a href="{{ site_url ~ path_for('/change-password') }}" class="dropdown-item">
+                <i class="fas fa-key"></i>
+                <span>Change Password</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="{{ site_url ~ path_for('/logout') }}" class="dropdown-item">
+                <i class="ni ni-user-run"></i>
+                <span>Logout</span>
+              </a>
+            </div>
+          </li>
+        </ul>
+{% endblock %}
+{% block menu %}
+        <!-- Navigation -->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="./index.html">
+              <i class="ni ni-tv-2 text-primary"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/icons.html">
+              <i class="ni ni-planet text-blue"></i> Icons
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/maps.html">
+              <i class="ni ni-pin-3 text-orange"></i> Maps
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/profile.html">
+              <i class="ni ni-single-02 text-yellow"></i> User profile
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/tables.html">
+              <i class="ni ni-bullet-list-67 text-red"></i> Tables
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/login.html">
+              <i class="ni ni-key-25 text-info"></i> Login
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/register.html">
+              <i class="ni ni-circle-08 text-pink"></i> Register
+            </a>
+          </li>
+        </ul>
+        <!-- Divider -->
+        <hr class="my-3">
+        <!-- Heading -->
+        <h6 class="navbar-heading text-muted">Documentation</h6>
+        <!-- Navigation -->
+        <ul class="navbar-nav mb-md-3">
+          <li class="nav-item">
+            <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard/docs/getting-started/overview.html">
+              <i class="ni ni-spaceship"></i> Getting started
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard/docs/foundation/colors.html">
+              <i class="ni ni-palette"></i> Foundation
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard/docs/components/alerts.html">
+              <i class="ni ni-ui-04"></i> Components
+            </a>
+          </li>
+        </ul>
+{% endblock %}
+{% block main_title %}
+  <!-- Brand -->
+  <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="{{currentPath}}">Packager</a>
+{% endblock %}
+{% block content_body %}
+  <div class="row">
+    <div class="col-xl-12 mb-5 mb-xl-0">
+      <div class="card shadow">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Data Modules</h3>
+            </div>
+            <div class="col text-right">
+              <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target=".addnew"><i class="fas fa-cloud-download-alt"></i> Install New</button>
+            </div>
+          </div>
+        </div>
+        <!-- terms modal content -->
+        <div class="modal fade addnew" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title text-themecolor" id="myLargeModalLabel"><i class="fas fa-cloud-download-alt"></i> Install Module</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              </div>
+              <form class="form-horizontal form-material" id="addnewdata" action="#">
+                <div class="modal-body">
+                  <div id="report-newdata"></div>
+                  <div class="form-group">
+                    <label class="col-md-12">Namespace</label>
+                    <div class="col-md-12">
+                      <input id="namespace" type="text" class="form-control form-control-line" required>
+                      <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> Namespace must be written correctly.</small></span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-12">Source Zip Archive</label>
+                    <div class="col-md-12">
+                      <input id="source" type="text" class="form-control form-control-line" required>
+                      <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> Source zip archive must be direct link.</small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary waves-effect text-left" data-dismiss="modal">Cancel</button>
+                  <button id="submitbtn" type="button" class="btn btn-success" onclick="installPackage($('#source').val(),$('#namespace').val())">Install Module</button>
+                </div>
+              </form>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <div class="card-body">
+          <div id="message"></div>
+          <div class="table-responsive">
+            <table id="datatable" class="table align-items-center table-flush" width="100%">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col" class="all">#</th>
+                  <th scope="col" class="all">Name</th>
+                  <th scope="col">Namespace</th>
+                  <th scope="col">Version</th>
+                  <th scope="col">Size</th>
+                  <th scope="col">Install Date</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" class="not-export-col all">Manage</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block preloadjs %}
+function writeMessage(selector,type,message1,message2){message2=(message2===undefined)?"":message2;$(function(){return $(selector).html('<div class="alert alert-'+type+' alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button><strong>'+message1+'</strong> '+message2+'</div>');});}
+function disableClickButton(selectorid,todo,buttontext){todo=(todo===undefined)?true:todo;buttontext=(buttontext===undefined)?"":buttontext;btn=document.getElementById(selectorid),btn.disabled=todo,''!=buttontext&&(btn.innerHTML=buttontext)}
+function installPackage(source,namespace){
+  var btn = "submitbtn";
+  disableClickButton(btn);
+  $.ajax({
+    type: "GET",
+    url: "{{path_for('/packager/install/zip/safely') }}?source="+encodeURIComponent(source)+"&namespace="+encodeURIComponent(namespace),
+    dataType: "json",
+    cache: false,
+    success: function (data, textstatus) {
+      if (data.status == "success"){
+        /* clear form */
+        $("#addnewdata")
+          .find("input,textarea")
+          .val("")
+          .end();
+        writeMessage("#reportmsg","success",data.message);
+        swal("Installing Module Success", data.message, "success");
+        $('#datamain').DataTable().ajax.reload();
+      } else {
+        writeMessage("#reportmsg","danger",data.message);
+        swal("Installing Module Failed", data.message, "error");
+      }
+    },
+    complete: function() {
+      disableClickButton(btn,false);
+    },
+    error: function (data, textstatus) {
+      writeMessage("#reportmsg","danger",data.message);
+      swal("Installing Module Failed", data.message, "error");
+    }
+  });
+}
+function removePackage(namespace,dataid=''){
+  swal({   
+    title: "Are You Sure?",   
+    text: "Uninstall Module causing damage to application!\nMake sure you are aware of this risk.",
+    type: "warning",   
+    showCancelButton: true,   
+    confirmButtonColor: "#DD6B55",   
+    confirmButtonText: "OK, Uninstall Now!",
+    cancelButtonText: "Cancel",
+    closeOnConfirm: false 
+    }, function(){
+      var btn = "deletebtn"+dataid;
+      disableClickButton(btn);
+      $.ajax({
+        type: "GET",
+        url: "{{path_for('/packager/uninstall') }}?namespace="+encodeURIComponent(namespace),
+        dataType: "json",
+        cache: false,
+        success: function (data, textstatus) {
+          if (data.status == "success"){
+            writeMessage("#message","success",data.message);
+            swal("Uninstall Module Success", data.message, "success");
+            $('#datatable').DataTable().ajax.reload();
+            if(dataid != '') $('.'+dataid).modal('hide');
+          } else {
+            writeMessage("#message","danger",data.message);
+            swal("Uninstall Module Failed", data.message, "error");
+          }
+        },
+        complete: function(){
+          disableClickButton(btn,false);
+        },
+        error: function (data, textstatus) {
+          writeMessage("#message","danger",data.message);
+          swal("Uninstall Module Failed", data.message, "error");
+        }
+      })
+    });
+}
+{% endblock %}
+{% block appjs %}
+getScript('{{ site_url ~ path_for('/') }}assets/vendor/sweetalert/sweetalert.min.js',function(){
+  getScript('{{ site_url ~ path_for('/') }}assets/js/argon.min.js?v={{ global.app.version }}',function(){
+    getScript('{{ site_url ~ path_for('/') }}assets/vendor/datatables/datatables.min.js',function(){
+      var selectCol = [ 0, 1, 2, 3, 4, 5, 6 ];
+      var table = $('#datatable').DataTable({
+        dom: "Brftlpi",
+        responsive: true,
+        processing: true,
+        serverSide: false,
+        stateSave: true,
+        pageLength: 10,
+        language: {
+          lengthMenu: 'Show _MENU_',
+          info: 'Display _START_ - _END_ of _TOTAL_ records',
+          infoEmpty: '',
+          paginate: {
+            previous: '<i class="fas fa-chevron-left"></i>',
+            next: '<i class="fas fa-chevron-right"></i>'
+          }
+        },
+        ajax: {
+          type: "GET",
+          url: "{{path_for('/packager/show/all') }}",
+          cache: false,
+          dataSrc: function ( json ) {
+            if (json.status == "success"){
+                return json.result;
+            } else {
+                return [];
+            }
+          },
+          error: function(xhr, error, thrown){
+            console.log(xhr.responseText);
+          }
+        },
+        columns: [
+          { "render": function(data,type,row,meta) {
+              var a = meta.row + 1;                    
+              return a;
+            } 
+          },
+          { data: "package.name" },
+          { data: "namespace" },
+          { data: "package.version" },
+          { data: "size" },
+          { data: "date" },
+          { data: "compatible.status"},
+          { "render": function(data,type,row,meta) {
+              var a = '<button type="button" class="btn btn-primary btn-fill btn-wd" data-toggle="modal" data-target=".'+row.namespace.replace('/','_')+'"><i class="fas fa-cube"></i> Info Detail</button>';
+              var b = ' <button type="button" class="btn btn-danger btn-fill btn-wd" onclick="removePackage(\''+row.namespace+'\',\''+row.namespace.replace('/','_')+'\')"><i class="fas fa-trash-alt"></i> Uninstall Module</button>';
+              var c = ' <span class="label label-inverse">Used for this page!</span>';
+              if (row.namespace != 'modules/packager'){
+                a += b;
+              } else {
+                a += c;
+              }
+
+              a += '<!-- terms modal content -->\
+                <div class="modal fade '+row.namespace.replace('/','_')+'" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">\
+                  <div class="modal-dialog modal-lg" role="document">\
+                    <div class="modal-content">\
+                      <div class="modal-header">\
+                        <h4 class="modal-title" id="myLargeModalLabel"><i class="fas fa-cube"></i> Info Detail '+row.package.name+'</h4>\
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>\
+                      </div>\
+                      <form class="form-horizontal form-material" id="data'+row.namespace.replace('/','_')+'">\
+                        <div class="modal-body">\
+                          <div class="row">\
+                            <div class="col-md-4">\
+                              <div class="form-group">\
+                                <label class="col-md-12">Install Date</label>\
+                                <div class="col-md-12">\
+                                  <input id="created" type="text" class="form-control form-control-line" value="'+row.date+'" readonly>\
+                                </div>\
+                              </div>\
+                            </div>\
+                            <div class="col-md-4">\
+                              <div class="form-group">\
+                                <label class="col-md-12">Name</label>\
+                                <div class="col-md-12">\
+                                  <input id="name" type="text" class="form-control form-control-line" value="'+row.package.name+'" readonly>\
+                                </div>\
+                              </div>\
+                            </div>\
+                            <div class="col-md-4">\
+                              <div class="form-group">\
+                                <label class="col-md-12">Namespace</label>\
+                                <div class="col-md-12">\
+                                  <input id="namespace" type="text" class="form-control form-control-line" value="'+row.namespace+'" readonly>\
+                                </div>\
+                              </div>\
+                            </div>\
+                          </div>\
+                            <div class="row">\
+                              <div class="col-md-4">\
+                                <div class="form-group">\
+                                  <label class="col-md-12">Version</label>\
+                                  <div class="col-md-12">\
+                                    <input id="version" type="text" class="form-control form-control-line" value="'+row.package.version+'" readonly>\
+                                  </div>\
+                                </div>\
+                              </div>\
+                              <div class="col-md-4">\
+                                <div class="form-group">\
+                                  <label class="col-md-12">Size</label>\
+                                  <div class="col-md-12">\
+                                    <input id="size" type="text" class="form-control form-control-line" value="'+row.size+'" readonly>\
+                                  </div>\
+                                </div>\
+                              </div>\
+                              <div class="col-md-4">\
+                                <div class="form-group">\
+                                  <label class="col-md-12">Status</label>\
+                                  <div class="col-md-12">\
+                                    <input id="status" type="text" class="form-control form-control-line" value="'+row.compatible.status+'" readonly>\
+                                  </div>\
+                                </div>\
+                              </div>\
+                            </div>\
+                            <div class="row">\
+                              <div class="col-md-12">\
+                                <div class="form-group">\
+                                  <label class="col-md-12">Description</label>\
+                                  <div class="col-md-12">\
+                                    <input id="description" type="text" class="form-control form-control-line" value="'+row.package.description+'" readonly>\
+                                  </div>\
+                                </div>\
+                              </div>\
+                              <div class="col-md-12">\
+                                <div class="form-group">\
+                                  <label class="col-md-12">Compatible</label>\
+                                  <div class="col-md-12">\
+                                    <input id="compatible" type="text" class="form-control form-control-line" value="'+row.compatible.message+'" readonly>\
+                                  </div>\
+                                </div>\
+                              </div>\
+                              <div class="col-md-12">\
+                                <div class="form-group">\
+                                  <label class="col-md-12">Dependency</label>\
+                                  <div class="col-md-12">\
+                                    <input id="dependency" type="text" class="form-control form-control-line" value="'+row.dependency.message+'" readonly>\
+                                  </div>\
+                                </div>\
+                              </div>\
+                              <div class="col-md-12">\
+                                <div class="form-group">\
+                                  <label class="col-md-12">Author</label>\
+                                  <div class="col-md-12">\
+                                    <input id="author" type="text" class="form-control form-control-line" value="'+row.package.author.name+'" readonly>\
+                                  </div>\
+                                </div>\
+                              </div>\
+                              <div class="col-md-12">\
+                                <div class="form-group">\
+                                  <label class="col-md-12">Licence</label>\
+                                  <div class="col-md-12">\
+                                    <input id="license" type="text" class="form-control form-control-line" value="'+row.package.license.url+'" readonly>\
+                                  </div>\
+                                </div>\
+                              </div>\
+                            </div>\
+                          </div>\
+                          <div class="modal-footer">\
+                            <div class="col-sm-12">\
+                              <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">\
+                                <div class="btn-group mr-2" role="group" aria-label="First group">';
+                                  if (row.namespace != 'modules/packager'){
+                                    a += '<button id="deletebtn'+row.namespace.replace('/','_')+'" type="button" onclick="removePackage(\''+row.namespace+'\',\''+row.namespace.replace('/','_')+'\');return false;" class="btn btn-danger">Uninstall Module</button>';
+                                  }
+                                  a += '</div>\
+                                    <div class="btn-group mr-2" role="group" aria-label="Second group">\
+                                      <button type="button" class="btn btn-default waves-effect text-left mr-2" onclick="window.open(\''+row.package.url+'\',\'_blank\')">Fork Project</button>\
+                                      <button type="button" class="btn btn-success waves-effect text-left mr-2" onclick="window.open(\''+row.readme.url+'\',\'_blank\')">Readme</button>\
+                                    </div>\
+                                </div>\
+                              </div>\
+                            </div>\
+                                                </form>\
+                    </div>\
+                    <!-- /.modal-content -->\
+                  </div>\
+                  <!-- /.modal-dialog -->\
+                </div>\
+                <!-- /.modal -->';
+
+              return a;
+            }
+          }
+        ],
+        buttons: [
+          {
+            extend: "copy",
+            text: "<i class=\"fas fa-copy\"></i> Copy",
+            className: "bg-primary text-white",
+            exportOptions: {
+              columns: ':visible:not(.not-export-col)'
+            }
+          }, {
+            extend: "csv",
+            text: "<i class=\"fas fa-file\"></i> CSV",
+            className: "bg-primary text-white",
+            exportOptions: {
+              columns: ':visible:not(.not-export-col)'
+            }
+          }, {
+            extend: "excel",
+            text: "<i class=\"fas fa-file-excel\"></i> Excel",
+            className: "bg-primary text-white",
+            exportOptions: {
+              columns: ':visible:not(.not-export-col)'
+            }
+          }, {
+            extend: "pdf",
+            text: "<i class=\"fas fa-file-pdf\"></i> PDF",
+            className: "bg-primary text-white",
+            exportOptions: {
+              columns: ':visible:not(.not-export-col)'
+            }
+          }, {
+            extend: "print",
+            text: "<i class=\"fas fa-print\"></i> Print",
+            className: "bg-primary text-white",
+            exportOptions: {
+              columns: ':visible:not(.not-export-col)'
+            }
+          }, {
+            extend: 'colvis',
+            text: "Hide/Show",
+            className: "bg-primary text-white",
+            columns: selectCol
+          }
+        ]
+      })
+
+      $('div.dataTables_length').addClass('float-left');
+      $('div.dataTables_info').addClass('text-center');
+      $("div.dataTables_filter input").unbind();
+      $("div.dataTables_filter input").keyup($$app.throttle( function (e) {
+        table.search( this.value ).draw();
+      },2000));
+
+    })
+  })
+})
+getStyle('{{ site_url ~ path_for('/') }}assets/vendor/sweetalert/sweetalert.css',function(){
+  getStyle('{{ site_url ~ path_for('/') }}assets/vendor/datatables/datatables.min.css');
+})
+{% endblock %}
