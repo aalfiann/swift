@@ -16,5 +16,7 @@
     "/packager/install/zip",
     "/packager/install/zip/safely",
     "/packager/get/info",
+    "/packager/get/readme",
+    "/packager/get/license",
     "/packager/show/all"
 ]
