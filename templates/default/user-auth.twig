@@ -141,12 +141,12 @@
               <h3 class="mb-0">Authorization Manager</h3>
             </div>
             <div class="col text-right">
-              <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addNewData">Add New</button>
+              <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addNewData">Add New Pattern</button>
             </div>
           </div>
         </div>
         <div id="message" class="col-12"></div>
-        <div class="table-responsive">
+        <div class="table-responsive" style="height:500px;overflow: auto;">
           <table id="datatable" class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
@@ -170,7 +170,7 @@
         </div>
         <div class="card-footer py-4">
           <hr>
-          <button type="button" onclick="save()" class="btn btn-info btn-block">Save Changes</button>
+          <button type="button" onclick="save()" class="btn btn-info btn-block">Apply Changes</button>
         </div>
 
         <!-- Modal -->
@@ -178,7 +178,7 @@
           <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="addNewDataLabel">Add new Pattern</h5>
+                <h4 class="modal-title" id="addNewDataLabel">Add new Pattern</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -229,7 +229,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" onclick="addnew()" class="btn btn-primary">Save changes</button>
+                <button type="button" onclick="addnew()" class="btn btn-primary">Add Pattern</button>
               </div>
             </div>
           </div>
