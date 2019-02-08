@@ -88,7 +88,7 @@ class User extends UserHelper {
                     foreach($routes as $route){
                         $auth[] = [
                             'pattern' => $route,
-                            'methods' => ['GET','POST']
+                            'methods' => ['GET','POST','PUT','DELETE','OPTIONS']
                         ];
                     }
                     if(!empty($auth)) {
