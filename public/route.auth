@@ -9,5 +9,12 @@
     "/user-auth/acl/api/json/update",
     "/user-auth/routes/api/json",
     "/user-auth/routes/append/api/json",
-    "/user-auth/routes/delete/api/json"
+    "/user-auth/routes/delete/api/json",
+    "/packager",
+    "/packager/install",
+    "/packager/uninstall",
+    "/packager/install/zip",
+    "/packager/install/zip/safely",
+    "/packager/get/info",
+    "/packager/show/all"
 ]

@@ -2,7 +2,7 @@
     "package": {
         "name": "Packager",
         "url": "https://github.com/aalfiann/swift-modules-packager",
-        "description": "A modules to make easy for manage the packages for swift",
+        "description": "A module packager to make easy managing the packages for swift web framework.",
         "version": "1.0",
         "require": {
             "swift": "1.0.0"
