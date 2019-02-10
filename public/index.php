@@ -25,6 +25,42 @@ spl_autoload_register(function ($classname) {
     require (realpath(__DIR__ . '/..').DIRECTORY_SEPARATOR.str_replace('\\', DIRECTORY_SEPARATOR, $classname) . '.php');
 });
 
+// Load modified smtp config if any
+if(\modules\core\helper\AppConfig::has('smtp.json')){
+    $data = \modules\core\helper\AppConfig::load('smtp.json');
+    if(!empty($data)){
+        $config['smtp'] = $data;
+    }
+}
+
+// Load modified app config if any
+if(\modules\core\helper\AppConfig::has('app.json')){
+    $data = \modules\core\helper\AppConfig::load('app.json');
+    if(!empty($data)){
+        if(isset($data['name'])) {
+            $config['app']['name'] = $data['name'];
+            $config['app']['template']['variable']['global']['app']['name'] = $data['name'];
+        }
+        if(isset($data['language'])) {
+            $config['app']['language'] = $data['language'];
+            $config['app']['template']['variable']['global']['app']['language'] = $data['language'];
+        }
+        if(isset($data['timezone'])) $config['app']['timezone'] = $data['timezone'];
+        if(isset($data['log.level'])) $config['app']['log']['level'] = $data['log.level'];
+        if(isset($data['http.max-age'])) $config['app']['http']['max-age'] = $data['http.max-age'];
+        if(isset($data['template.handler'])) $config['app']['template']['handler'] = $data['template.handler'];
+        if(isset($data['template.folder'])) $config['app']['template']['folder'] = $data['template.folder'];
+    }
+}
+
+// Load template variable if any
+if(\modules\core\helper\AppConfig::has('template.json')){
+    $data = \modules\core\helper\AppConfig::load('template.json');
+    if(!empty($data)){
+        $config['app']['template']['variable']['global']['template'] = $data;
+    }
+}
+
 // Set time zone
 date_default_timezone_set($config['app']['timezone']);
 
