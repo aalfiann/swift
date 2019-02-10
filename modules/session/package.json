@@ -2,7 +2,7 @@
     "package": {
         "name": "Session",
         "url": "https://github.com/aalfiann/swift-modules-session",
-        "description": "A modules to handle the session in swift.",
+        "description": "A modules to handle the session in swift web framework.",
         "version": "1.0",
         "require": {
             "swift": "1.0.0"
