@@ -191,6 +191,7 @@
                   <th scope="col" class="all">#</th>
                   <th scope="col" class="all">Name</th>
                   <th scope="col">Namespace</th>
+                  <th scope="col">Type</th>
                   <th scope="col">Version</th>
                   <th scope="col">Size</th>
                   <th scope="col">Install Date</th>
@@ -286,7 +287,7 @@ function removePackage(namespace,dataid=''){
 getScript('{{ site_url ~ path_for('/') }}assets/vendor/sweetalert/sweetalert.min.js',function(){
   getScript('{{ site_url ~ path_for('/') }}assets/js/argon.min.js?v={{ global.app.version }}',function(){
     getScript('{{ site_url ~ path_for('/') }}assets/vendor/datatables/datatables.min.js',function(){
-      var selectCol = [ 0, 1, 2, 3, 4, 5, 6 ];
+      var selectCol = [ 0, 1, 2, 3, 4, 5, 6, 7 ];
       var table = $('#datatable').DataTable({
         dom: "Brftlpi",
         responsive: true,
@@ -326,6 +327,7 @@ getScript('{{ site_url ~ path_for('/') }}assets/vendor/sweetalert/sweetalert.min
           },
           { data: "package.name" },
           { data: "namespace" },
+          { data: "package.type" },
           { data: "package.version" },
           { data: "size" },
           { data: "date" },
