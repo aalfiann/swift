@@ -1,6 +1,9 @@
 /vendor/
 public/storage/
 public/cache/
+public/config/app.json
+public/config/smtp.json
+public/config/template.json
 logs/app.log
 composer.lock
 config.php
