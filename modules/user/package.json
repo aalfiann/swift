@@ -2,7 +2,7 @@
     "package": {
         "name": "User",
         "url": "https://github.com/aalfiann/swift-modules-user",
-        "description": "A modules to handle the user management in swift.",
+        "description": "A modules to handle the user management in swift web framework.",
         "version": "1.0",
         "require": {
             "swift": "1.0.0"
