@@ -300,11 +300,12 @@
                   <label class="col-md-12">Json Global Template Variable</label>
                   <div class="col-md-12">
                     <textarea id="json" name="json" rows="10" type="text"></textarea>
-                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is your custom twig template variable in json formatted. Ex. usage in twig >> <b>{{ '{{' }}global.template.author{{ '}}' }}</b></small></span>
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is your custom twig template variable in json formatted. Ex. if the json is <b>{"author":"swift"}</b> then usage in twig >> <b>{{ '{{' }}global.template.author{{ '}}' }}</b></small></span>
                   </div>
                 </div>
                 <hr class="mt-0 mb-3">
-                <button type="button" onclick="savetemplate()" class="btn btn-info btn-block">Save Template Variable</button>
+                <button type="button" onclick="savetemplate()" class="btn btn-info">Save Template Variable</button>
+                <button type="button" onclick="cleartemplate()" class="btn btn-secondary">Clear</button>
             </div>
           </div>
 
@@ -334,7 +335,7 @@ function saveapp(){
       if (data.status == "success"){
         writeMessage("#appmessage","success",data.message);
       } else {
-        writeMessage("#appmessage","danger",data.message);
+        writeMessage("#appmessage","danger",data.message,JSON.stringify(data.problem));
       }
     },
     error: function(x, e) {
@@ -394,7 +395,7 @@ function savesmtp(){
       if (data.status == "success"){
         writeMessage("#smtpmessage","success",data.message);
       } else {
-        writeMessage("#smtpmessage","danger",data.message);
+        writeMessage("#smtpmessage","danger",data.message,JSON.stringify(data.problem));
       }
     },
     error: function(x, e) {
@@ -449,6 +450,29 @@ function savetemplate(){
         writeMessage("#templatemessage","success",data.message);
       } else {
         writeMessage("#templatemessage","danger",data.message,"Data must be valid json formatted");
+      }
+    },
+    error: function(x, e) {
+      if($$validate.isJson(x.responseText)){
+        var obj = JSON.parse(x.responseText);
+        console.log(obj.message);
+      } else {
+        console.log(x.responseText);
+      }
+    }
+  });
+}
+function cleartemplate(){
+  $.ajax({
+    url: "{{ site_url ~ path_for('/') }}setting/template/clear/api/json",
+    dataType: "json",
+    type: "post",
+    success: function(data) {
+      if (data.status == "success"){
+        writeMessage("#templatemessage","success",data.message);
+        editor.setValue("");
+      } else {
+        writeMessage("#templatemessage","danger",data.message);
       }
     },
     error: function(x, e) {

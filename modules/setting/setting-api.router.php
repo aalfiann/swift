@@ -71,7 +71,7 @@ use \DavidePastore\Slim\Validation\Validation;
         ->add(new UserAuth)
         ->add(new SessionCheck($container));
 
-    // API save Template setting
+    // API save Template variable
     $app->post('/setting/template/api/json', function (Request $request, Response $response) {
         $arr = [];
         if($request->getAttribute('has_errors')){
@@ -92,6 +92,18 @@ use \DavidePastore\Slim\Validation\Validation;
             ->withJSON($arr);
     })->setName('/setting/template/api/json')
         ->add(new Validation(validator::template()))
+        ->add(new UserAuth)
+        ->add(new SessionCheck($container));
+
+    // API clear Template variable
+    $app->post('/setting/template/clear/api/json', function (Request $request, Response $response) {
+        $sm = new SettingManager();
+        $arr = $sm->clearTemplate();
+        
+        return $response->withStatus(200)
+            ->withHeader('Content-Type','application/json; charset=utf-8')
+            ->withJSON($arr);
+    })->setName('/setting/template/clear/api/json')
         ->add(new UserAuth)
         ->add(new SessionCheck($container));
 

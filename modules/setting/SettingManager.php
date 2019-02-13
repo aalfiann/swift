@@ -11,12 +11,40 @@ use \modules\core\helper\AppConfig;
  * @license    https://github.com/aalfiann/swift-modules-setting/blob/master/LICENSE.md  MIT License
  */
 class SettingManager {
+
+    protected $basemain;
+
+    public function __construct(){
+        $this->basemain = dirname(dirname(dirname(__FILE__)));
+    }
+
+    /**
+     * Check the directory is valid or not
+     * 
+     * @return bool
+     */
+    public function isDir($path){
+        return is_dir($this->basemain.DIRECTORY_SEPARATOR.$path);
+    }
+
     /**
      * Save App setting
      * 
      * @return array
      */
     public function saveApp(){
+        if(!$this->isDir($this->template_handler)){
+            return [
+                'status' => 'error',
+                'message' => 'Template Handler path is not found!'
+            ];
+        }
+        if(!$this->isDir($this->template_folder)){
+            return [
+                'status' => 'error',
+                'message' => 'Template Folder path is not found!'
+            ];
+        }
         $result = AppConfig::set('app.json',[
             'name' => $this->name,
             'language' => $this->language,
@@ -68,7 +96,7 @@ class SettingManager {
     }
 
     /**
-     * Save template setting
+     * Save template variable
      * 
      * @return array
      */
@@ -77,12 +105,31 @@ class SettingManager {
         if($result){
             return [
                 'status' => 'success',
-                'message' => 'Saving Template setting is successful!'
+                'message' => 'Saving Template variable is successful!'
             ];
         }
         return [
             'status' => 'error',
-            'message' => 'Saving Template setting is failed!'
+            'message' => 'Saving Template variable is failed!'
+        ];
+    }
+
+    /**
+     * Clear template variable
+     * 
+     * @return array
+     */
+    public function clearTemplate(){
+        $result = AppConfig::clear('template.json');
+        if($result){
+            return [
+                'status' => 'success',
+                'message' => 'Template variable is successful cleared!'
+            ];
+        }
+        return [
+            'status' => 'error',
+            'message' => 'Template variable is failed to clear!'
         ];
     }
 

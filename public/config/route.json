@@ -25,5 +25,6 @@
     "/setting/smtp/api/json",
     "/setting/smtp/load/api/json",
     "/setting/template/api/json",
-    "/setting/template/load/api/json"
+    "/setting/template/load/api/json",
+    "/setting/template/clear/api/json"
 ]
