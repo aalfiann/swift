@@ -18,5 +18,12 @@
     "/packager/get/info",
     "/packager/get/readme",
     "/packager/get/license",
-    "/packager/show/all"
+    "/packager/show/all",
+    "/setting",
+    "/setting/app/api/json",
+    "/setting/app/load/api/json",
+    "/setting/smtp/api/json",
+    "/setting/smtp/load/api/json",
+    "/setting/template/api/json",
+    "/setting/template/load/api/json"
 ]

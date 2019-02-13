@@ -1,0 +1,507 @@
+{% extends "layout-base.twig" %}
+{% block head %}
+  <meta name="description" content="Start your development with a Dashboard for Bootstrap 4.">
+  <meta name="author" content="Creative Tim">
+  <title>Setting - {{global.app.name}}</title>
+{% endblock %}
+{% block usermenuleft %}
+  <!-- User -->
+      <ul class="nav align-items-center d-md-none">
+        <li class="nav-item dropdown">
+          <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="media align-items-center">
+              <span class="avatar avatar-sm rounded-circle">
+                <img alt="Image placeholder" src="{{ ((session_get('avatar'))? session_get('avatar'): site_url ~ path_for('/') ~ 'assets/img/theme/face-0.jpg') }}">
+              </span>
+            </div>
+          </a>
+          <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
+            <a href="{{ site_url ~ path_for('/my-profile') }}" class="dropdown-item">
+              <i class="ni ni-single-02"></i>
+              <span>My profile</span>
+            </a>
+            <a href="{{ site_url ~ path_for('/change-password') }}" class="dropdown-item">
+              <i class="fas fa-key"></i>
+              <span>Change Password</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="{{ site_url ~ path_for('/logout') }}" class="dropdown-item">
+              <i class="ni ni-user-run"></i>
+              <span>Logout</span>
+            </a>
+          </div>
+        </li>
+      </ul>
+{% endblock %}
+{% block usermenuright %}
+  <!-- User -->
+        <ul class="navbar-nav align-items-center d-none d-md-flex">
+          <li class="nav-item dropdown">
+            <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <div class="media align-items-center">
+                <span class="avatar avatar-sm rounded-circle">
+                  <img alt="Image placeholder" src="{{ ((session_get('avatar'))? session_get('avatar'): site_url ~ path_for('/') ~ 'assets/img/theme/face-0.jpg') }}">
+                </span>
+                <div class="media-body ml-2 d-none d-lg-block">
+                  <span class="mb-0 text-sm  font-weight-bold">{{session_get('username')}}</span>
+                </div>
+              </div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
+              <a href="{{ site_url ~ path_for('/my-profile') }}" class="dropdown-item">
+                <i class="ni ni-single-02"></i>
+                <span>My profile</span>
+              </a>
+              <a href="{{ site_url ~ path_for('/change-password') }}" class="dropdown-item">
+                <i class="fas fa-key"></i>
+                <span>Change Password</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="{{ site_url ~ path_for('/logout') }}" class="dropdown-item">
+                <i class="ni ni-user-run"></i>
+                <span>Logout</span>
+              </a>
+            </div>
+          </li>
+        </ul>
+{% endblock %}
+{% block menu %}
+        <!-- Navigation -->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="./index.html">
+              <i class="ni ni-tv-2 text-primary"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/icons.html">
+              <i class="ni ni-planet text-blue"></i> Icons
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/maps.html">
+              <i class="ni ni-pin-3 text-orange"></i> Maps
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/profile.html">
+              <i class="ni ni-single-02 text-yellow"></i> User profile
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/tables.html">
+              <i class="ni ni-bullet-list-67 text-red"></i> Tables
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/login.html">
+              <i class="ni ni-key-25 text-info"></i> Login
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./examples/register.html">
+              <i class="ni ni-circle-08 text-pink"></i> Register
+            </a>
+          </li>
+        </ul>
+        <!-- Divider -->
+        <hr class="my-3">
+        <!-- Heading -->
+        <h6 class="navbar-heading text-muted">Documentation</h6>
+        <!-- Navigation -->
+        <ul class="navbar-nav mb-md-3">
+          <li class="nav-item">
+            <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard/docs/getting-started/overview.html">
+              <i class="ni ni-spaceship"></i> Getting started
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard/docs/foundation/colors.html">
+              <i class="ni ni-palette"></i> Foundation
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://demos.creative-tim.com/argon-dashboard/docs/components/alerts.html">
+              <i class="ni ni-ui-04"></i> Components
+            </a>
+          </li>
+        </ul>
+{% endblock %}
+{% block main_title %}
+  <!-- Brand -->
+  <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="{{currentPath}}">Setting</a>
+{% endblock %}
+{% block content_body %}
+  <div class="row">
+    <div class="col-xl-12 mb-5 mb-xl-0">
+      <div class="card shadow">
+        <div class="card-header bg-secondary">
+
+          <ul class="nav nav-pills nav-fill flex-column flex-md-row" id="tabs-icons-text" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link mb-sm-3 mb-md-0 active" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i class="fas fa-cube mr-2"></i>App</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i class="fas fa-server mr-2"></i>SMTP</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i class="fas fa-puzzle-piece mr-2"></i>Template</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="card-body">
+
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="tabs-icons-text-1" role="tabpanel" aria-labelledby="tabs-icons-text-1-tab">
+              <div id="appmessage"></div>
+              <form id="appform" method="post">
+              <div class="form-group">
+                <label class="col-md-12">Name</label>
+                <div class="col-md-12">
+                  <input id="name" type="text" class="form-control form-control-line" required>
+                  <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is the name of your application.</small></span>
+                </div>
+              </div>
+              <hr class="mt-0 mb-3">
+              <div class="row">
+                <div class="form-group col-lg-6">
+                  <label class="col-md-12">Language</label>
+                  <div class="col-md-12">
+                    <input id="language" type="text" class="form-control form-control-line" required>
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is the language code that we use. Ex. <b>en</b> for english.</small></span>
+                  </div>
+                </div>
+                <div class="form-group col-lg-6">
+                  <label class="col-md-12">Timezone</label>
+                  <div class="col-md-12">
+                    <input id="timezone" type="text" class="form-control form-control-line" required>
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is your default php timezone. Ex. <b>Asia/Jakarta</b></small></span>
+                  </div>
+                </div>
+              </div>
+              <hr class="mt-0 mb-3">
+              <div class="row">
+                <div class="form-group col-lg-6">
+                  <label class="col-md-12">Log Level</label>
+                  <div class="col-md-12">
+                    <input id="log_level" type="text" class="form-control form-control-line" required>
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is the level of logger. Ex. <b>\Monolog\Logger::DEBUG</b></small></span>
+                  </div>
+                </div>
+                <div class="form-group col-lg-6">
+                  <label class="col-md-12">Http Max-Age</label>
+                  <div class="col-md-12">
+                    <input id="http_max_age" type="text" class="form-control form-control-line" required>
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is the lifetime of http cache. Ex. <b>604800</b> for one week.</small></span>
+                  </div>
+                </div>
+              </div>
+              <hr class="mt-0 mb-3">
+              <div class="row">
+                <div class="form-group col-lg-6">
+                  <label class="col-md-12">Template Handler</label>
+                  <div class="col-md-12">
+                    <input id="template_handler" type="text" class="form-control form-control-line" required>
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is the template path for error handler.</small></span>
+                  </div>
+                </div>
+                <div class="form-group col-lg-6">
+                  <label class="col-md-12">Template Folder</label>
+                  <div class="col-md-12">
+                    <input id="template_folder" type="text" class="form-control form-control-line" required>
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is the template path for your application.</small></span>
+                  </div>
+                </div>
+              </div>
+              <hr class="mt-0 mb-3">
+              <button type="button" onclick="saveapp()" class="btn btn-info btn-block">Save App Setting</button>
+              </form>
+            </div>
+            <div class="tab-pane fade" id="tabs-icons-text-2" role="tabpanel" aria-labelledby="tabs-icons-text-2-tab">
+              <div id="smtpmessage"></div>  
+              <div class="row">
+                <div class="form-group col-lg-6">
+                  <label class="col-md-12">Host</label>
+                  <div class="col-md-12">
+                    <input id="host" type="text" class="form-control form-control-line" required>
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is smtp host. Ex. <b>smtp.gmail.com</b>.</small></span>
+                  </div>
+                </div>
+                <div class="form-group col-lg-6">
+                  <label class="col-md-12">Default Name From</label>
+                  <div class="col-md-12">
+                    <input id="defaultnamefrom" type="text" class="form-control form-control-line" required>
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is default name from. You can filled with yourname / yourwebsitetitle.</small></span>
+                  </div>
+                </div>
+              </div>
+              <hr class="mt-0 mb-3">
+              <div class="row">
+                <div class="form-group col-lg-4">
+                  <label class="col-md-12">Secure</label>
+                  <div class="col-md-12">
+                    <input id="secure" type="text" class="form-control form-control-line">
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is type of smtp security. You can use tls or ssl.</small></span>
+                  </div>
+                </div>
+                <div class="form-group col-lg-4">
+                  <label class="col-md-12">Port</label>
+                  <div class="col-md-12">
+                    <input id="port" type="text" class="form-control form-control-line">
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is port smtp.</small></span>
+                  </div>
+                </div>
+                <div class="form-group col-lg-4">
+                  <label class="col-md-12">Debug</label>
+                  <div class="col-md-12">
+                    <input id="debug" type="text" class="form-control form-control-line">
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is to set mailer debug. Choose one of 1 - 4. Default is 0 for production.</small></span>
+                  </div>
+                </div>
+              </div>
+              <hr class="mt-0 mb-3">
+              <div class="row col-lg-12">
+                <div class="col-lg-2">
+                  <div class="custom-control custom-checkbox mb-3 mr-3">
+                    <input class="custom-control-input" id="auth" type="checkbox">
+                    <label class="custom-control-label" for="auth">Auth</label>
+                  </div>
+                </div>
+                <div class="col-lg-3">
+                  <div class="custom-control custom-checkbox mb-3 mr-3">
+                    <input class="custom-control-input" id="autotls" type="checkbox">
+                    <label class="custom-control-label" for="autotls">Auto TLS</label>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-lg-6">
+                  <label class="col-md-12">Username</label>
+                  <div class="col-md-12">
+                    <input id="username" type="text" class="form-control form-control-line">
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is your username to login into smtp server</small></span>
+                  </div>
+                </div>
+                <div class="form-group col-lg-6">
+                  <label class="col-md-12">Password</label>
+                  <div class="col-md-12">
+                    <input id="password" type="password" class="form-control form-control-line">
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is your password to login into smtp server.</small></span>
+                  </div>
+                </div>
+              </div>
+              <hr class="mt-0 mb-3">
+              <button type="button" onclick="savesmtp()" class="btn btn-info btn-block">Save SMTP Setting</button>
+            </div>
+            <div class="tab-pane fade" id="tabs-icons-text-3" role="tabpanel" aria-labelledby="tabs-icons-text-3-tab">
+                <div id="templatemessage"></div>
+                <div class="form-group col-lg-12">
+                  <label class="col-md-12">Json Global Template Variable</label>
+                  <div class="col-md-12">
+                    <textarea id="json" name="json" rows="10" type="text"></textarea>
+                    <span class="help-block text-muted"><small><i class="fas fa-info-circle"></i> This is your custom twig template variable in json formatted. Ex. usage in twig >> <b>{{ '{{' }}global.template.author{{ '}}' }}</b></small></span>
+                  </div>
+                </div>
+                <hr class="mt-0 mb-3">
+                <button type="button" onclick="savetemplate()" class="btn btn-info btn-block">Save Template Variable</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block preloadjs %}
+var editor = null;
+function writeMessage(selector,type,message1,message2){message2=(message2===undefined)?"":message2;$(function(){return $(selector).html('<div class="alert alert-'+type+' alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button><strong>'+message1+'</strong> '+message2+'</div>');});}
+function saveapp(){
+  $.ajax({
+    url: "{{ site_url ~ path_for('/') }}setting/app/api/json",
+    data: {
+      name: $('#name').val(),
+      language: $('#language').val(),
+      timezone: $('#timezone').val(),
+      http_max_age: $('#http_max_age').val(),
+      log_level: $('#log_level').val(),
+      template_handler: $('#template_handler').val(),
+      template_folder: $('#template_folder').val()
+    },
+    dataType: "json",
+    type: "post",
+    success: function(data) {
+      if (data.status == "success"){
+        writeMessage("#appmessage","success",data.message);
+      } else {
+        writeMessage("#appmessage","danger",data.message);
+      }
+    },
+    error: function(x, e) {
+      if($$validate.isJson(x.responseText)){
+        var obj = JSON.parse(x.responseText);
+        console.log(obj.message);
+      } else {
+        console.log(x.responseText);
+      }
+    }
+  });
+}
+function loadapp(){
+  $.ajax({
+    url: "{{ site_url ~ path_for('/') }}setting/app/load/api/json",
+    dataType: "json",
+    type: "get",
+    cache: false,
+    success: function(data) {
+      if (data.status == "success"){
+        $('#name').val(data.result.name);
+        $('#language').val(data.result.language);
+        $('#timezone').val(data.result.timezone);
+        $('#log_level').val(data.result["log.level"]);
+        $('#http_max_age').val(data.result["http.max-age"]);
+        $('#template_handler').val(data.result["template.handler"]);
+        $('#template_folder').val(data.result["template.folder"]);
+      }
+    },
+    error: function(x, e) {
+      if($$validate.isJson(x.responseText)){
+        var obj = JSON.parse(x.responseText);
+        console.log(obj.message);
+      } else {
+        console.log(x.responseText);
+      }
+    }
+  });
+}
+function savesmtp(){
+  $.ajax({
+    url: "{{ site_url ~ path_for('/') }}setting/smtp/api/json",
+    data: {
+      host: $('#host').val(),
+      autotls: $('#autotls:checked').val(),
+      auth: $('#auth:checked').val(),
+      secure: $('#secure').val(),
+      port: $('#port').val(),
+      defaultnamefrom: $('#defaultnamefrom').val(),
+      username: $('#username').val(),
+      password: $('#password').val(),
+      debug: $('#debug').val()
+    },
+    dataType: "json",
+    type: "post",
+    success: function(data) {
+      if (data.status == "success"){
+        writeMessage("#smtpmessage","success",data.message);
+      } else {
+        writeMessage("#smtpmessage","danger",data.message);
+      }
+    },
+    error: function(x, e) {
+      if($$validate.isJson(x.responseText)){
+        var obj = JSON.parse(x.responseText);
+        console.log(obj.message);
+      } else {
+        console.log(x.responseText);
+      }
+    }
+  });
+}
+function loadsmtp(){
+  $.ajax({
+    url: "{{ site_url ~ path_for('/') }}setting/smtp/load/api/json",
+    dataType: "json",
+    type: "get",
+    cache: false,
+    success: function(data) {
+      if (data.status == "success"){
+        $('#host').val(data.result.host);
+        $('#autotls').prop('checked',data.result.autotls);
+        $('#auth').prop('checked',data.result.auth);
+        $('#secure').val(data.result.secure);
+        $('#port').val(data.result.port);
+        $('#defaultnamefrom').val(data.result.defaultnamefrom);
+        $('#username').val(data.result.username);
+        $('#password').val(data.result.password);
+        $('#debug').val(data.result.debug);
+      }
+    },
+    error: function(x, e) {
+      if($$validate.isJson(x.responseText)){
+        var obj = JSON.parse(x.responseText);
+        console.log(obj.message);
+      } else {
+        console.log(x.responseText);
+      }
+    }
+  });
+}
+function savetemplate(){
+  $.ajax({
+    url: "{{ site_url ~ path_for('/') }}setting/template/api/json",
+    data: {
+      json: $.trim(editor.getValue())
+    },
+    dataType: "json",
+    type: "post",
+    success: function(data) {
+      if (data.status == "success"){
+        writeMessage("#templatemessage","success",data.message);
+      } else {
+        writeMessage("#templatemessage","danger",data.message,"Data must be valid json formatted");
+      }
+    },
+    error: function(x, e) {
+      if($$validate.isJson(x.responseText)){
+        var obj = JSON.parse(x.responseText);
+        console.log(obj.message);
+      } else {
+        console.log(x.responseText);
+      }
+    }
+  });
+}
+{% endblock %}
+{% block appjs %}
+  getScript('{{ site_url ~ path_for('/') }}assets/js/argon.min.js?v={{ global.app.version }}',function(){
+    getScript('{{ site_url ~ path_for('/') }}assets/vendor/codemirror/lib/codemirror.js',function(){
+      getScript('{{ site_url ~ path_for('/') }}assets/vendor/codemirror/mode/javascript/javascript.js',function(){
+        getScript('{{ site_url ~ path_for('/') }}assets/vendor/codemirror/addon/display/autorefresh.js',function(){
+          var code = $("#json")[0];
+	        editor = CodeMirror.fromTextArea(code, {
+            mode: "javascript",
+            theme: "mdn-like",
+            autoRefresh:true,
+  		      lineNumbers : true,
+            lineWrapping: true,
+            json: true
+      	  });
+          $.ajax({
+            url: "{{ site_url ~ path_for('/') }}setting/template/load/api/json",
+            dataType: "json",
+            type: "get",
+            cache: false,
+            success: function(data) {
+              if (data.status == "success"){
+                editor.setValue(JSON.stringify(data.result, null, 2));
+              }
+            },
+            error: function(x, e) {
+              if($$validate.isJson(x.responseText)){
+                var obj = JSON.parse(x.responseText);
+                console.log(obj.message);
+              } else {
+                console.log(x.responseText);
+              }
+            }
+          });
+        });
+      });
+    });
+  });
+  loadapp();
+  loadsmtp();
+  getStyle('{{ site_url ~ path_for('/') }}assets/vendor/codemirror/lib/codemirror.css',function(){
+    getStyle('{{ site_url ~ path_for('/') }}assets/vendor/codemirror/theme/mdn-like.css');
+  });
+{% endblock %}
